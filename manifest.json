@@ -1,0 +1,21 @@
+{
+
+  "manifest_version": 1,
+  "name": "Custom Style Manager",
+  "version": "1.0",
+
+  "description": "Custom Style Manager allows domain-level custom CSS styling for any website you visit.",
+
+  "icons": {
+    "48": "icons/paintbrush-icon-48.png",
+    "96": "icons/paintbrush-icon-96.png",
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.*.*/*"],
+      "js": ["customStyleApplier.js"]
+    }
+  ]
+//editor not yet 
+}

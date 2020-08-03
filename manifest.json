@@ -1,21 +1,39 @@
 {
 
-  "manifest_version": 1,
+  "manifest_version": 2,
   "name": "Custom Style Manager",
   "version": "1.0",
 
   "description": "Custom Style Manager allows domain-level custom CSS styling for any website you visit.",
+  "homepage_url": "https://github.com/HalilCan/leetcode-warmup",
 
   "icons": {
     "48": "icons/paintbrush-icon-48.png",
-    "96": "icons/paintbrush-icon-96.png",
+    "96": "icons/paintbrush-icon-96.png"
   },
 
   "content_scripts": [
     {
-      "matches": ["*://*.*.*/*"],
+      "matches": ["<all_urls>"],
       "js": ["customStyleApplier.js"]
     }
+  ],
+
+  "permissions": [
+  	"activeTab"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/paintbrush-icon-32.png",
+    "default_title": "Custom Style Manager",
+    "default_popup": "popup/style_editor.html"
+  },
+
+  "web_accessible_resources" : [
+  	"rules.json"
   ]
+
 //editor not yet 
 }
+
+//Reading manifest: Error processing content_scripts.0.matches.0: Value "*://*.*.*/*" must either: be one of ["<all_urls>"], must either [match the pattern /^(https?|wss?|file|ftp|\*):\/\/(\*|\*\.[^*/]+|[^*/]+)\/.*$/, or match the pattern /^file:\/\/\/.*$/], or match the pattern /^resource:\/\/(\*|\*\.[^*/]+|[^*/]+)\/.*$|^about:/

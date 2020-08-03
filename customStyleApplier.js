@@ -1,14 +1,28 @@
 // TODO: host rules online
+// TODO: about:home -like pages don't trigger for some reason. I blame manifest.json.
 
 const __debugMode = 0;
+const RULE_PATH = "rules.json"; 
 
+/*
 let rulesFile = {
 	"ruleObjects": {
 		"www.google.com" : {
 			"content": {
 				"body" : "border: 5px solid red;",
-				".hp" : "background-color: blue;",
+				".hp" : "background-color: yellow;",
 				"#searchform" : "background-color: black;"
+			},
+			"information": {
+				"author": "",
+				"creationDate": "",
+				"updateDate": "",
+				"votes": "0"
+			}
+		},
+		"about:home" : {
+			"content": {
+				"body" : "background-color: red;"
 			},
 			"information": {
 				"author": "",
@@ -18,16 +32,39 @@ let rulesFile = {
 			}
 		}
 	}
-}
+};
+*/
+
+// let rulesFile = {};
 
 let ruleObjects = rulesFile["ruleObjects"];
 
 const hostname = window.location.hostname;
+if (hostname == "") {
+	hostname = window.location.href;
+}
+
 if (__debugMode) {
 // 	console.log(`window.location:`);
 // 	console.log(window.location);
 	console.log(`hostname: ${hostname}`);
 }
+
+let checkLoaded = () => {
+	return document.readyState === "complete" || document.readyState === "interactive";
+}
+
+let loadRuleFile = () => {
+	//will async cause problems?
+	fetch(RULE_PATH)
+	.then(response => response.json())
+	.then(json => {
+		console.log(`loaded file:`);
+		console.log(json);
+		rulesFile = json;
+	})
+}
+// loadRuleFile();
 
 if (hostname in ruleObjects) {
 	if (__debugMode) {
@@ -64,8 +101,8 @@ if (hostname in ruleObjects) {
     	}
 	}
 
-	 //newStyleSheet.appendChild(document.createTextNode(cssString));
-	 newStyleSheet.innerText = cssString;
+	newStyleSheet.appendChild(document.createTextNode(cssString));
+	 // newStyleSheet.innerText = cssString;
 	document.head.appendChild(newStyleSheet);
 
 	if (__debugMode) {

@@ -38,3 +38,36 @@ let loadRuleFile = () => {
 	}
 }
 // loadRuleFile();
+
+
+
+/*
+let rulesFile = {
+	"ruleObjects": {
+		"www.google.com" : {
+			"content": {
+				"body" : "border: 5px solid red;",
+				".hp" : "background-color: yellow;",
+				"#searchform" : "background-color: black;"
+			},
+			"information": {
+				"author": "",
+				"creationDate": "",
+				"updateDate": "",
+				"votes": "0"
+			}
+		},
+		"about:home" : {
+			"content": {
+				"body" : "background-color: red;"
+			},
+			"information": {
+				"author": "",
+				"creationDate": "",
+				"updateDate": "",
+				"votes": "0"
+			}
+		}
+	}
+};
+*/

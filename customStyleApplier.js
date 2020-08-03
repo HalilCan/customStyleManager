@@ -3,37 +3,6 @@
 
 const __debugMode = 0;
 
-/*
-let rulesFile = {
-	"ruleObjects": {
-		"www.google.com" : {
-			"content": {
-				"body" : "border: 5px solid red;",
-				".hp" : "background-color: yellow;",
-				"#searchform" : "background-color: black;"
-			},
-			"information": {
-				"author": "",
-				"creationDate": "",
-				"updateDate": "",
-				"votes": "0"
-			}
-		},
-		"about:home" : {
-			"content": {
-				"body" : "background-color: red;"
-			},
-			"information": {
-				"author": "",
-				"creationDate": "",
-				"updateDate": "",
-				"votes": "0"
-			}
-		}
-	}
-};
-*/
-
 let rulesFile = rules;
 
 let ruleObjects = rulesFile["ruleObjects"];
@@ -44,8 +13,8 @@ if (hostname == "") {
 }
 
 if (__debugMode) {
-// 	console.log(`window.location:`);
-// 	console.log(window.location);
+ 	console.log(`window.location:`);
+ 	console.log(window.location);
 	console.log(`hostname: ${hostname}`);
 }
 
@@ -96,4 +65,40 @@ if (hostname in ruleObjects) {
 		console.log(`\nfinal style:`);
 		console.log(newStyleSheet);		
 	}
-}	
+}
+
+let parseCss = (styleContent) => {
+	let doc = document.implementation.createHTMLDocument(""),
+	styleElement = document.createElement("style");
+
+	styleElement.textContent = styleContent;
+	// the style will only be parsed once it is added to a document
+	doc.body.appendChild(styleElement);
+
+	let cssRules = styleElement.sheet.cssRules;
+
+	if (__debugMode) {
+		console.log("parsed CSS rules:");
+		console.log(cssRules);
+	}
+
+	// doc.body.removeChild(styleElement);
+	return cssRules;
+}
+
+
+let testCSS = `body {
+border: 5px solid yellow;
+}
+
+.hp {
+background-color: green;
+}
+
+#searchform {
+background-color: blue;
+}
+
+`;
+
+console.log(parseCss(testCSS));

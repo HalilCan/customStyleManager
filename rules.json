@@ -2,7 +2,7 @@ rules = {
 	"ruleObjects": {
 		"www.google.com" : {
 			"content": {
-				"body" : "border: 5px solid white;",
+				"body" : "border: 5px solid red;",
 				".hp" : "background-color: blue;",
 				"#searchform" : "background-color: black;"
 			},

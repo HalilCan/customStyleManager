@@ -148,7 +148,7 @@ let listenForClicks = () => {
   cssText = ruleObjectsToCssString(ruleObjects, hostname);
   
   if(cssText == "") {
-    setText(`${hostname} not found in rules`);
+    setText(`${hostname}: There are no custom rules for this page.`);
   } else {
     setText(cssText); 
   }

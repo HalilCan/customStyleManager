@@ -45,12 +45,16 @@
 }
 
 
+body {
+	background-color: #eaeaea;
+}
 
 
 #popup-viewport {
 	width: 370px;
 	height: 420px;
 }
+
 
 #textbox-container {
 	width: 100%;
@@ -62,6 +66,9 @@
 	height: 340px;
 
 	margin-bottom: 10px;
+
+	background-color: #230000;
+	color: #ebffe0;
 }
 
 #controls-container {

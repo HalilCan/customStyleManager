@@ -1,8 +1,16 @@
 {
 	"rules": {
 		"www.google.com" : {
-			"body" : "border: 1px solid red",
-			".container" : "background-color: blue"
+			"content": {
+				"body" : "border: 1px solid red",
+				".container" : "background-color: blue"	
+			},
+			"information": {
+				"author": "",
+				"creationDate": "",
+				"updateDate": "",
+				"votes": "0"
+			}
 		}
 	}
 }

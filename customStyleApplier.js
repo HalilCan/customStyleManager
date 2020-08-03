@@ -20,20 +20,9 @@ if (__debugMode) {
 
 let checkLoaded = () => {
 	return document.readyState === "complete" || document.readyState === "interactive";
-}
+};
 
-if (hostname in ruleObjects) {
-	if (__debugMode) {
-		console.log(`${hostname} found in ruleObjects`);
-	}
-	// I  am considering making a more granular process on a 
-	// per-element basis, but that would take more time and browsers 
-	// manage additional CSS rules well anyway. (or even with 
-	// individual rule-pieces, but a similar argument applies)
-
-	let newStyleSheet = document.createElement("style");
-	newStyleSheet.type = "text/css";
-
+let ruleObjectsToCssString = (ruleObjects, hostname) => {
 	let cssString = "";
 
 	let hostObject = ruleObjects[hostname];
@@ -57,15 +46,23 @@ if (hostname in ruleObjects) {
     	}
 	}
 
+	return cssString;
+};
+
+let applyCssString = (cssString) => {
+	let newStyleSheet = document.createElement("style");
+	newStyleSheet.type = "text/css";
 	newStyleSheet.appendChild(document.createTextNode(cssString));
-	 // newStyleSheet.innerText = cssString;
 	document.head.appendChild(newStyleSheet);
 
+
 	if (__debugMode) {
-		console.log(`\nfinal style:`);
-		console.log(newStyleSheet);		
+		console.log(`---applyCssString---`);
+		console.log(`newStyleSheet:`);
+		console.log(newStyleSheet);	
+		console.log(`---------------`);	
 	}
-}
+};
 
 let parseCss = (styleContent) => {
 	let doc = document.implementation.createHTMLDocument(""),
@@ -86,7 +83,7 @@ let parseCss = (styleContent) => {
 
 	// doc.body.removeChild(styleElement);
 	return cssRulesToText(cssRules);
-}
+};
 
 let cssRulesToText = (cssRules) => {
 	let string = "";
@@ -101,7 +98,7 @@ let cssRulesToText = (cssRules) => {
 		console.log(`---------`);
 	}
 	return string;
-}
+};
 
 let cssTextToRules = (styleContent) => {
 	let doc = document.implementation.createHTMLDocument(""),
@@ -123,7 +120,7 @@ let cssTextToRules = (styleContent) => {
 	// doc.body.removeChild(styleElement);
 	return cssRules;
 
-}
+};
 
 
 let testCSS = `body {
@@ -139,5 +136,20 @@ background-color: blue;
 }
 
 `;
+
+
+if (hostname in ruleObjects) {
+	if (__debugMode) {
+		console.log(`${hostname} found in ruleObjects`);
+	}
+	// I  am considering making a more granular process on a 
+	// per-element basis, but that would take more time and browsers 
+	// manage additional CSS rules well anyway. (or even with 
+	// individual rule-pieces, but a similar argument applies)
+
+	let cssString = ruleObjectsToCssString(ruleObjects, hostname);
+	let cssApplyResult = applyCssString(cssString);
+}
+
 
 console.log(parseCss(testCSS));

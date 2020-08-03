@@ -1,6 +1,6 @@
 // TODO: host rules online
 
-const __debugMode = 1;
+const __debugMode = 0;
 
 let rulesFile = {
 	"ruleObjects": {
@@ -20,58 +20,56 @@ let rulesFile = {
 	}
 }
 
-let applyStyle = () => {
-	let ruleObjects = rulesFile["ruleObjects"];
+let ruleObjects = rulesFile["ruleObjects"];
 
-	const hostname = window.location.hostname;
-	if (__debugMode) {
-	// 	console.log(`window.location:`);
-	// 	console.log(window.location);
-		console.log(`hostname: ${hostname}`);
-	}
-
-	if (hostname in ruleObjects) {
-		if (__debugMode) {
-			console.log(`${hostname} found in ruleObjects`);
-		}
-		// I  am considering making a more granular process on a 
-		// per-element basis, but that would take more time and browsers 
-		// manage additional CSS rules well anyway. (or even with 
-		// individual rule-pieces, but a similar argument applies)
-
-		let style = document.createElement("customStylesheet");
-		style.type = "text/css";
-
-		let cssString = "";
-
-		let hostObject = ruleObjects[hostname];
-		let ruleContent = hostObject["content"];
-		if (__debugMode) {
-			console.log(`ruleContent:`);
-			console.log(ruleContent);
-		}
-
-		for (key in ruleContent) {
-			//The nested if makes sure that you don't enumerate over properties in the prototype chain of the object (which is the behaviour you almost certainly want). You must use
-			if (Object.prototype.hasOwnProperty.call(ruleContent, key)) {
-				let ruleText = ruleContent[key];
-				if (__debugMode) {
-					console.log("ruleText:");
-					console.log(key, ruleText);
-				}
-
-
-				cssString += `${key} {\n 
-					${ruleText}\n
-				}\n\n`;
-	    	}
-		}
-
-		style.appendChild(document.createTextNode(cssString));
-		document.head.appendChild(style);
-	}	
+const hostname = window.location.hostname;
+if (__debugMode) {
+// 	console.log(`window.location:`);
+// 	console.log(window.location);
+	console.log(`hostname: ${hostname}`);
 }
 
-window.onload = applyStyle;
+if (hostname in ruleObjects) {
+	if (__debugMode) {
+		console.log(`${hostname} found in ruleObjects`);
+	}
+	// I  am considering making a more granular process on a 
+	// per-element basis, but that would take more time and browsers 
+	// manage additional CSS rules well anyway. (or even with 
+	// individual rule-pieces, but a similar argument applies)
+
+	let newStyleSheet = document.createElement("style");
+	newStyleSheet.type = "text/css";
+
+	let cssString = "";
+
+	let hostObject = ruleObjects[hostname];
+	let ruleContent = hostObject["content"];
+	if (__debugMode) {
+		console.log(`ruleContent:`);
+		console.log(ruleContent);
+	}
+
+	for (key in ruleContent) {
+		//The nested if makes sure that you don't enumerate over properties in the prototype chain of the object (which is the behaviour you almost certainly want). You must use
+		if (Object.prototype.hasOwnProperty.call(ruleContent, key)) {
+			let ruleText = ruleContent[key];
+			if (__debugMode) {
+				console.log("ruleText:");
+				console.log(key, ruleText);
+			}
 
 
+			cssString += `${key} {\n${ruleText}\n}\n\n`;
+    	}
+	}
+
+	 //newStyleSheet.appendChild(document.createTextNode(cssString));
+	 newStyleSheet.innerText = cssString;
+	document.head.appendChild(newStyleSheet);
+
+	if (__debugMode) {
+		console.log(`\nfinal style:`);
+		console.log(newStyleSheet);		
+	}
+}	

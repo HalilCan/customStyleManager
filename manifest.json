@@ -15,19 +15,19 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["customStyleApplier.js"]
+      "js": ["rules.json", "customStyleApplier.js"]
     }
   ],
 
-  "permissions": [
-  	"activeTab"
-  ],
+  // "permissions": [
+  // 	"activeTab"
+  // ],
 
-  "browser_action": {
-    "default_icon": "icons/paintbrush-icon-32.png",
-    "default_title": "Custom Style Manager",
-    "default_popup": "popup/style_editor.html"
-  },
+  // "browser_action": {
+  //   "default_icon": "icons/paintbrush-icon-32.png",
+  //   "default_title": "Custom Style Manager",
+  //   "default_popup": "popup/style_editor.html"
+  // },
 
   "web_accessible_resources" : [
   	"rules.json"

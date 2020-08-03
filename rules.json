@@ -1,8 +1,8 @@
-{
+rules = {
 	"ruleObjects": {
 		"www.google.com" : {
 			"content": {
-				"body" : "border: 5px solid red;",
+				"body" : "border: 5px solid white;",
 				".hp" : "background-color: blue;",
 				"#searchform" : "background-color: black;"
 			},
@@ -14,4 +14,4 @@
 			}
 		}
 	}
-}
+};

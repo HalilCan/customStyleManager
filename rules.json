@@ -1,9 +1,10 @@
 {
-	"rules": {
+	"ruleObjects": {
 		"www.google.com" : {
 			"content": {
-				"body" : "border: 1px solid red",
-				".container" : "background-color: blue"	
+				"body" : "border: 5px solid red;",
+				".hp" : "background-color: blue;",
+				"#searchform" : "background-color: black;"
 			},
 			"information": {
 				"author": "",

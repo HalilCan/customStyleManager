@@ -40,6 +40,11 @@
 	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
 }
 
+.active-reset-button {
+	background-color: #FFC24B;
+}
+
+
 
 
 #popup-viewport {

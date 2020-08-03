@@ -14,6 +14,10 @@ let hostname;
 let tab;
 let tabUrl;
 
+let cssWasInserted = 0;
+let insertedCss = "";
+
+
 if (__debugMode) {
   console.log("ALIVE");
 }
@@ -29,6 +33,9 @@ let setText = (newText) => {
   textBox.value = newText;
 }
 
+let getText = () => {
+  return textBox.value;
+}
 
 setText("1111");
 
@@ -79,6 +86,28 @@ let applyCssString = (cssString) => {
     console.log(`---------------`); 
   }
 };
+
+let insertCss = (cssString) => {
+  browser.tabs.insertCSS({code: cssString}).then(() => {
+    insertedCss = cssString;
+    // let url = beastNameToURL(e.target.textContent);
+    // browser.tabs.sendMessage(tabs[0].id, {
+    //   command: "beastify",
+    //   beastURL: url
+    // });
+  });
+}
+
+let removeCss = (cssString) => {
+  browser.tabs.removeCss({code: cssString}).then(() => {
+    insertedCss = "";
+    // let url = beastNameToURL(e.target.textContent);
+    // browser.tabs.sendMessage(tabs[0].id, {
+    //   command: "beastify",
+    //   beastURL: url
+    // });
+  });
+}
 
 
 let parseCss = (styleContent) => {
@@ -162,7 +191,15 @@ let listenForClicks = () => {
     let targetId = e.target.id;
 
     if (targetId == "apply-button") {
-      setText(targetId);
+
+      if (cssWasInserted) {
+        removeCss(insertedCss);
+      }
+
+      let newText = getText();
+
+      insertCss(newText);
+      // TODO: timer-based color fade reset button for "undo functionality"
     } else if (targetId == "reset-button") {
       setText(cssText);
     }

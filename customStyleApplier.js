@@ -80,10 +80,49 @@ let parseCss = (styleContent) => {
 	if (__debugMode) {
 		console.log("parsed CSS rules:");
 		console.log(cssRules);
+		console.log(cssRules[0]);
+		console.log(cssRules[0].cssText);
+	}
+
+	// doc.body.removeChild(styleElement);
+	return cssRulesToText(cssRules);
+}
+
+let cssRulesToText = (cssRules) => {
+	let string = "";
+	for (let i = 0; i < cssRules.length; i ++) {
+		string += cssRules[i].cssText;
+		string += `\n\n`;
+	}
+	if(__debugMode) {
+		console.log(`---cssRulesToText---`);
+		console.log(cssRules);
+		console.log(string);
+		console.log(`---------`);
+	}
+	return string;
+}
+
+let cssTextToRules = (styleContent) => {
+	let doc = document.implementation.createHTMLDocument(""),
+	styleElement = document.createElement("style");
+
+	styleElement.textContent = styleContent;
+	// the style will only be parsed once it is added to a document
+	doc.body.appendChild(styleElement);
+
+	let cssRules = styleElement.sheet.cssRules;
+
+	if (__debugMode) {
+		console.log(`---cssTextToRules---`);
+		console.log(styleContent);
+		console.log(cssRules);
+		console.log(`--------------`)
 	}
 
 	// doc.body.removeChild(styleElement);
 	return cssRules;
+
 }
 
 

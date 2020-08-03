@@ -1,19 +1,23 @@
-const __debugMode = 0;
+const __debugMode = 1;
 
-let ruleText = "";
-let rulesFile = "empty";
-let ruleObjects = "empty";
-let defaultRuleFile = rules;
+let cssText = "";
+let rulesFile = rules;
+let ruleObjects = rulesFile["ruleObjects"];
 
 let textBox = document.getElementById("popup-textarea");
 let applyButton = document.getElementById("apply-button");
 let resetButton = document.getElementById("reset-button");
 
+let hostnameFound = 0;
+let hostname;
+
+let tab;
+let tabUrl;
+
 if (__debugMode) {
   console.log("ALIVE");
 }
 
-textBox.value = "111";
 
 let setText = (newText) => {
   if (__debugMode) {
@@ -22,75 +26,18 @@ let setText = (newText) => {
     console.log(`--------`); 
   }
 
-  console.log(defaultRuleFile);
-
   textBox.value = newText;
 }
 
-let loadRules = (e) => {
-  if (__debugMode) {
-    console.log(`---loadRules---`);
-    console.log(e);
-    console.log(`--------`); 
-  }
-  /*  
-  if (hostname in ruleObjects) {
-    if (__debugMode) {
-      console.log(`${hostname} found in ruleObjects`);
-    }
-    // I  am considering making a more granular process on a 
-    // per-element basis, but that would take more time and browsers 
-    // manage additional CSS rules well anyway. (or even with 
-    // individual rule-pieces, but a similar argument applies)
 
-    let cssString = ruleObjectsToCssString(ruleObjects, hostname);
-    let cssApplyResult = applyCssString(cssString);
-  }
-  */
-  
-  setText("123");
-}
+setText("1111");
 
-
-let listenForClicks = () => {
-  document.addEventListener("click", (e) => {
-    if (__debugMode) {
-      console.log(e);
-      console.log(e.target.id); 
-    }
-
-    let targetId = e.target.id;
-
-    if (targetId == "apply-button") {
-      setText(targetId);
-    } else if (targetId == "reset-button") {
-      setText(targetId + "2323");
-    }
-  })
-};
-
-window.onload = listenForClicks;
-
-
-/*
-
-const hostname = window.location.hostname;
-if (hostname == "") {
-  hostname = window.location.href;
-}
-
-if (__debugMode) {
-  console.log(`window.location:`);
-  console.log(window.location);
-  console.log(`hostname: ${hostname}`);
-}
-
-let setText = (newText) => {
-  textBox.value = newText;
-  alert("1");
-}
 
 let ruleObjectsToCssString = (ruleObjects, hostname) => {
+  if (hostnameFound == 0) {
+    return "";
+  }
+
   let cssString = "";
 
   let hostObject = ruleObjects[hostname];
@@ -117,67 +64,145 @@ let ruleObjectsToCssString = (ruleObjects, hostname) => {
   return cssString;
 };
 
-let loadRules = () => {
-  rulesFile = rules;
-  ruleObjects = rulesFile["ruleObjects"];
-  /*  
-  if (hostname in ruleObjects) {
-    if (__debugMode) {
-      console.log(`${hostname} found in ruleObjects`);
-    }
-    // I  am considering making a more granular process on a 
-    // per-element basis, but that would take more time and browsers 
-    // manage additional CSS rules well anyway. (or even with 
-    // individual rule-pieces, but a similar argument applies)
 
-    let cssString = ruleObjectsToCssString(ruleObjects, hostname);
-    let cssApplyResult = applyCssString(cssString);
+let applyCssString = (cssString) => {
+  let newStyleSheet = document.createElement("style");
+  newStyleSheet.type = "text/css";
+  newStyleSheet.appendChild(document.createTextNode(cssString));
+  document.head.appendChild(newStyleSheet);
+
+
+  if (__debugMode) {
+    console.log(`---applyCssString---`);
+    console.log(`newStyleSheet:`);
+    console.log(newStyleSheet); 
+    console.log(`---------------`); 
   }
-  */
-  /*
-  let cssString = ruleObjectsToCssString(ruleObjects, hostname);
-
-  setText(cssString);
-
-  textBox.content = 
-  console.log(`popup loadRules:`);
-  console.log(rulesFile);
-}
-
-let resetTextBox = (e) => {
-
-}
-
-let applyTextBox = (e) => {
-
-}
-
-window.onload = loadRules;
+};
 
 
+let parseCss = (styleContent) => {
+  let doc = document.implementation.createHTMLDocument(""),
+  styleElement = document.createElement("style");
 
-/*
-    function beastify(tabs) {
-      browser.tabs.insertCSS({code: hidePage}).then(() => {
-        let url = beastNameToURL(e.target.textContent);
-        browser.tabs.sendMessage(tabs[0].id, {
-          command: "beastify",
-          beastURL: url
-        });
-      });
+  styleElement.textContent = styleContent;
+  // the style will only be parsed once it is added to a document
+  doc.body.appendChild(styleElement);
+
+  let cssRules = styleElement.sheet.cssRules;
+
+  if (__debugMode) {
+    console.log("parsed CSS rules:");
+    console.log(cssRules);
+    console.log(cssRules[0]);
+    console.log(cssRules[0].cssText);
+  }
+
+  // doc.body.removeChild(styleElement);
+  return cssRulesToText(cssRules);
+};
+
+
+let cssRulesToText = (cssRules) => {
+  let string = "";
+  for (let i = 0; i < cssRules.length; i ++) {
+    string += cssRules[i].cssText;
+    string += `\n\n`;
+  }
+  if(__debugMode) {
+    console.log(`---cssRulesToText---`);
+    console.log(cssRules);
+    console.log(string);
+    console.log(`---------`);
+  }
+  return string;
+};
+
+
+let cssTextToRules = (styleContent) => {
+  let doc = document.implementation.createHTMLDocument(""),
+  styleElement = document.createElement("style");
+
+  styleElement.textContent = styleContent;
+  // the style will only be parsed once it is added to a document
+  doc.body.appendChild(styleElement);
+
+  let cssRules = styleElement.sheet.cssRules;
+
+  if (__debugMode) {
+    console.log(`---cssTextToRules---`);
+    console.log(styleContent);
+    console.log(cssRules);
+    console.log(`--------------`)
+  }
+
+  // doc.body.removeChild(styleElement);
+  return cssRules;
+
+};
+
+
+
+
+let listenForClicks = () => {
+  cssText = ruleObjectsToCssString(ruleObjects, hostname);
+  
+  if(cssText == "") {
+    setText(`${hostname} not found in rules`);
+  } else {
+    setText(cssText); 
+  }
+
+  document.addEventListener("click", (e) => {
+    if (__debugMode) {
+      console.log(e);
+      console.log(e.target.id); 
     }
-*/
-    /**
-     * Remove the page-hiding CSS from the active tab,
-     * send a "reset" message to the content script in the active tab.
-     */
-     /*
-    function reset(tabs) {
-      browser.tabs.removeCSS({code: hidePage}).then(() => {
-        browser.tabs.sendMessage(tabs[0].id, {
-          command: "reset",
-        });
-      });
+
+    let targetId = e.target.id;
+
+    if (targetId == "apply-button") {
+      setText(targetId);
+    } else if (targetId == "reset-button") {
+      setText = cssText;
+    }
+  })
+};
+
+
+function getTabUrl() {
+  browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
+    activeTab = tabs[0]; // Safe to assume there will only be one result
+    
+    if (__debugMode) {
+      console.log(`activeTab.url:`);
+      console.log(activeTab.url);      
     }
 
-    */
+    return activeTab;
+  }, console.error)
+  .then((activeTab) => {
+    tab = activeTab;
+    tabUrl = new URL(activeTab.url);
+    hostname = tabUrl.hostname;
+
+    if (__debugMode) {
+      console.log(`activeTab`);
+      console.log(activeTab);
+    }
+    if (__debugMode) {
+      console.log(`hostname: ${hostname}`);
+    }
+
+    if (hostname in ruleObjects) {
+      hostnameFound = 1;
+    }
+
+    listenForClicks();
+
+  })
+
+}
+
+
+window.onload = getTabUrl;

@@ -164,7 +164,7 @@ let listenForClicks = () => {
     if (targetId == "apply-button") {
       setText(targetId);
     } else if (targetId == "reset-button") {
-      setText = cssText;
+      setText(cssText);
     }
   })
 };

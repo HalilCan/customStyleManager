@@ -5,7 +5,7 @@ const __debugMode = 1;
 /// PRODUCTION GLOBALS AND CONSTANTS ///
 
 let cssText = "";
-let ruleObject;
+let ruleObject = {};
 
 let textBox = document.getElementById("popup-textarea");
 let applyButton = document.getElementById("apply-button");
@@ -41,7 +41,7 @@ function populateStorage() {
   let defaultKey = "www.google.com";
   let defaultRules = {
       "content": {
-        "body" : "background-color: black; color: white'",
+        "body" : "background-color: black; color: white;",
         ".hp" : "background-color: blue; border: 1px solid yellow;",
         "#searchform" : "background-color: red;"
       },
@@ -87,15 +87,15 @@ function setRules(hostname, cssText) {
       }
     }
 
-    localStorage.setItem(hostname, tempStorageObject);
+    localStorage.setItem(hostname, JSON.stringify(tempStorageObject));
   } else {
     tempStorageObject = JSON.parse(localStorage.getItem(hostname));
-    
+
     tempStorageObject.content = cssObject;
     tempStorageObject.information.author = author;
     tempStorageObject.information.updateDate = currentDate;
 
-    localStorage.setItem(hostname, tempStorageObject);
+    localStorage.setItem(hostname, JSON.stringify(tempStorageObject));
   }
 }
 
@@ -116,26 +116,6 @@ function getRules(hostname) {
 
   ruleObject = tempRuleObject;
   return tempRuleObject;
-}
-
-
-if (__debugMode) {
-  console.log(`---storageTest---`); 
-}
-if(!localStorage.getItem('www.google.com')) {
-  populateStorage();
-}
-if (__debugMode) {
-  console.log(`getting from storage`);
-  console.log(`JSON.parse(localStorage.getItem('rules')) = `);
-}
-
-
-if (__debugMode) {
-  console.log(ruleObjects);
-  console.log(`getRules("www.google.com") =`);
-  console.log(getRules("www.google.com"));
-  console.log(`-------`); 
 }
 
 ///////////////////////////
@@ -187,7 +167,7 @@ function ruleContentToCssString (ruleObject) {
     return "";
   }
 
-  let cssString = "";
+  let tempCssString = "";
 
   let ruleContent = ruleObject["content"];
   if (__debugMode) {
@@ -205,11 +185,11 @@ function ruleContentToCssString (ruleObject) {
       }
 
 
-      cssString += `${key} {\n${ruleText}\n}\n\n`;
+      tempCssString += `${key} {\n${ruleText}\n}\n\n`;
       }
   }
 
-  return cssString;
+  return tempCssString;
 };
 
 function cssTextToRules(styleContent) {
@@ -264,14 +244,22 @@ let removeCss = (cssString) => {
 ////// ASYNC FUNCTION SERIES BEGIN ///////
 
 let listenForClicks = () => {
-  if (ruleObject == undefined) {
-    let
+  if (cssText == "") {
+    // TODO
+  } else {
+    ruleObject = JSON.parse(cssText);    
   }
 
   cssText = ruleContentToCssString(ruleObject);
   
-  if(cssText == "") {
-    setText(`${hostname}: There are no custom rules for this page.`);
+  if (cssText == "") {
+    if (__debugMode) {
+      console.log(`custom rules for ${hostname} not found`);
+      console.log(ruleObject);
+      setText(JSON.stringify(ruleObject));
+    } else {
+      setText(`${hostname}: There are no custom rules for this page.`); 
+    }
   } else {
     setText(cssText); 
   }
@@ -293,6 +281,7 @@ let listenForClicks = () => {
       let newText = getText();
 
       insertCss(newText);
+      setRules(hostname, newText);
       // TODO: timer-based color fade reset button for "undo functionality"
     } else if (targetId == "reset-button") {
       setText(cssText);
@@ -327,6 +316,34 @@ function getTabUrl() {
 
     if (localStorage.getItem(hostname)) {
       hostnameFound = 1;
+    }
+
+    if (__debugMode) {
+      console.log(`---storageTest---`); 
+    }
+    if(!localStorage.getItem('www.google.com')) {
+      if (__debugMode) {
+        console.log(`www.google.com not found in localStorage rules`); 
+      }
+      populateStorage();
+    } else {
+      if (__debugMode) {
+        console.log(`www.google.com WAS found in localStorage rules`); 
+        console.log(JSON.parse(localStorage.getItem(`www.google.com`)));
+      }
+    }
+    if(!localStorage.getItem(hostname)) {
+      if (__debugMode) {
+        console.log(`${hostname} not found in localStorage rules`); 
+      } 
+      // TODO?
+    } else {
+      if (__debugMode) {
+        console.log(`${hostname} WAS found in localStorage rules`); 
+        console.log(JSON.parse(localStorage.getItem(hostname)));
+        setText(localStorage.getItem(hostname));
+      }
+      cssText = localStorage.getItem(hostname);
     }
 
     listenForClicks();

@@ -3,15 +3,12 @@
 // TODO: switch localStorage -> storage.sync
 
 
-// const __debugMode = 1;
-
-let rulesFile = rules;
-
-let ruleObjects = rulesFile["ruleObjects"];
+const __debugMode = 1;
 
 const hostname = window.location.hostname;
 if (hostname == "") {
 	hostname = window.location.href;
+	hostnameFound = 1;
 }
 
 if (__debugMode) {
@@ -23,9 +20,6 @@ if (__debugMode) {
 
 ///
 
-if(!localStorage.getItem('www.google.com')) {
-	populateStorage();
-}
 
 // setStyles();
 
@@ -45,9 +39,13 @@ function populateStorage() {
 			}
 		};
 
-	let defaultRulesText = JSON.stringify(defaultRules);
+	if (!localStorage.getItem(defaultKey)) {
+		let defaultRulesText = JSON.stringify(defaultRules);
 
-	localStorage.setItem(defaultKey, defaultRulesText);
+		localStorage.setItem(defaultKey, defaultRulesText);
+
+		console.log(localStorage.getItem(defaultKey));
+	}
 
 	// localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
 	// localStorage.setItem('font', document.getElementById('font').value);
@@ -84,33 +82,6 @@ function setStyles() {
 
 let checkLoaded = () => {
 	return document.readyState === "complete" || document.readyState === "interactive";
-};
-
-let ruleObjectsToCssString = (ruleObjects, hostname) => {
-	let cssString = "";
-
-	let hostObject = ruleObjects[hostname];
-	let ruleContent = hostObject["content"];
-	if (__debugMode) {
-		console.log(`ruleContent:`);
-		console.log(ruleContent);
-	}
-
-	for (key in ruleContent) {
-		//The nested if makes sure that you don't enumerate over properties in the prototype chain of the object (which is the behaviour you almost certainly want). You must use
-		if (Object.prototype.hasOwnProperty.call(ruleContent, key)) {
-			let ruleText = ruleContent[key];
-			if (__debugMode) {
-				console.log("ruleText:");
-				console.log(key, ruleText);
-			}
-
-
-			cssString += `${key} {\n${ruleText}\n}\n\n`;
-    	}
-	}
-
-	return cssString;
 };
 
 let applyCssString = (cssString) => {
@@ -186,15 +157,73 @@ let cssTextToRules = (styleContent) => {
 
 };
 
-if (hostname in ruleObjects) {
-	if (__debugMode) {
-		console.log(`${hostname} found in ruleObjects`);
-	}
-	// I  am considering making a more granular process on a 
-	// per-element basis, but that would take more time and browsers 
-	// manage additional CSS rules well anyway. (or even with 
-	// individual rule-pieces, but a similar argument applies)
+// if (hostname in ruleObjects) {
+// 	if (__debugMode) {
+// 		console.log(`${hostname} found in ruleObjects`);
+// 	}
+// 	// I  am considering making a more granular process on a 
+// 	// per-element basis, but that would take more time and browsers 
+// 	// manage additional CSS rules well anyway. (or even with 
+// 	// individual rule-pieces, but a similar argument applies)
 
-	let cssString = ruleObjectsToCssString(ruleObjects, hostname);
-	let cssApplyResult = applyCssString(cssString);
+// 	let cssString = ruleObjectsToCssString(ruleObjects, hostname);
+// 	let cssApplyResult = applyCssString(cssString);
+// }
+
+function ruleContentToCssStringOne (ruleContent) {
+  if (__debugMode) {
+    console.log(`ruleContentToCssStringOne(`);
+    console.log(ruleContent);
+    console.log(`-------`);
+  }
+
+  let tempCssString = "";
+
+  if (__debugMode) {
+    console.log(`ruleContent:`);
+    console.log(ruleContent);
+  }
+
+  for (key in ruleContent) {
+    //The nested if makes sure that you don't enumerate over properties in the prototype chain of the object (which is the behaviour you almost certainly want). You must use
+    if (Object.prototype.hasOwnProperty.call(ruleContent, key)) {
+      let ruleText = ruleContent[key];
+      if (__debugMode) {
+        console.log("ruleText:");
+        console.log(key, ruleText);
+      }
+
+
+      tempCssString += `${key} {\n${ruleText}\n}\n`;
+      }
+  }
+
+  return tempCssString;
+};
+
+
+window.onload = checkAndApplyStyles;
+
+function checkAndApplyStyles () {
+	// if(!localStorage.getItem('www.google.com')) {
+	// 	populateStorage();
+	// }
+	
+	if(!localStorage.getItem(hostname)) {
+		if (__debugMode) {
+			console.log(`${hostname} not found in localStorage rules`); 
+		} 
+		// TODO?
+	} else {
+		if (__debugMode) {
+			console.log(`${hostname} WAS found in localStorage rules`); 
+			console.log(JSON.parse(localStorage.getItem(hostname)));
+			// setText(localStorage.getItem(hostname));
+		}
+		let tempRuleObject = JSON.parse(localStorage.getItem(hostname));
+		let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
+		let cssApplyResult = applyCssString(cssString);
+	}
+
 }
+

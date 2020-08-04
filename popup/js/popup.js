@@ -154,7 +154,7 @@ let getText = () => {
   return textBox.value;
 }
 
-setText("Oops. You should not be seeing this.");
+setText("Oops. You should not be seeing this. Try reopening the window.");
 
 //////////////////////////
 
@@ -296,6 +296,10 @@ function cssTextToRules(styleContent) {
 /// POPUP-TAB (ACTIVE) CSS INSERTION AND DELETION ///
 
 let insertCss = (cssString) => {
+  if (__debugMode) {
+    console.log(`insertCss(`);
+    console.log(cssString);
+  }
   browser.tabs.insertCSS({code: cssString}).then(() => {
     insertedCss = cssString;
     // let url = beastNameToURL(e.target.textContent);
@@ -307,9 +311,11 @@ let insertCss = (cssString) => {
 }
 
 let removeCss = (cssString) => {
-  browser.tabs.removeCss({code: cssString}).then(() => {
-    insertedCss = "";
-  });
+  if (insertedCss != "") {
+    browser.tabs.removeCss({code: insertedCss}).then(() => {
+      insertedCss = "";
+    }); 
+  }
 }
 
 //////////////////////////////////////////////////////

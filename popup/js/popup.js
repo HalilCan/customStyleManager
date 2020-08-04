@@ -162,14 +162,20 @@ setText("Oops. You should not be seeing this.");
 
 /// JSON OBJECT TO CSS STRING CONVERTER ///
 
-function ruleContentToCssString (ruleObject) {
+function ruleContentToCssString (ruleContent) {
+  if (__debugMode) {
+    console.log(`ruleContentToCssString(`);
+    console.log(ruleContent);
+    console.log(`-------`);
+
+  }
+
   if (hostnameFound == 0) {
     return "";
   }
 
   let tempCssString = "";
 
-  let ruleContent = ruleObject["content"];
   if (__debugMode) {
     console.log(`ruleContent:`);
     console.log(ruleContent);
@@ -185,12 +191,15 @@ function ruleContentToCssString (ruleObject) {
       }
 
 
-      tempCssString += `${key} {\n${ruleText}\n}\n\n`;
+      tempCssString += `${key} {\n${ruleText}\n}\n`;
       }
   }
 
   return tempCssString;
 };
+
+
+/// CSS PARSING (INTO VALID OBJECTS) ///
 
 function isValidSelectorChar(code) {
   return  ((code > 47 && code < 58) || // numeric (0-9)
@@ -225,6 +234,9 @@ function cssTextToRules(styleContent) {
 
   for (let i = 0 ; i < styleContent.length; i ++) {
     ch = styleContent.charCodeAt(i);
+    if (ch == 10 || ch == 13) {
+      continue; //CR/newline
+    }
 
     if(inPara == 0 && inSelector == 0) {
       if (isValidSelectorChar(ch)) {
@@ -274,6 +286,9 @@ function cssTextToRules(styleContent) {
   return tempObj;
 };
 
+
+////////////////////////////////////////
+
 ////////////////////////////////////////
 
 
@@ -304,19 +319,18 @@ let removeCss = (cssString) => {
 ////// ASYNC FUNCTION SERIES BEGIN ///////
 
 let listenForClicks = () => {
-  if (cssText == "") {
-    // TODO
-  } else {
-    ruleObject = JSON.parse(cssText);    
+  if (__debugMode) {
+    console.log(`listenForClicks BEGIN`);
+    console.log(ruleObject);
   }
 
-  cssText = ruleContentToCssString(ruleObject);
+  cssText = ruleContentToCssString(ruleObject['content']);
   
   if (cssText == "") {
     if (__debugMode) {
       console.log(`custom rules for ${hostname} not found`);
       console.log(ruleObject);
-      setText(JSON.stringify(ruleObject));
+      // setText(JSON.stringify(ruleObject));
     } else {
       setText(`${hostname}: There are no custom rules for this page.`); 
     }
@@ -401,9 +415,9 @@ function getTabUrl() {
       if (__debugMode) {
         console.log(`${hostname} WAS found in localStorage rules`); 
         console.log(JSON.parse(localStorage.getItem(hostname)));
-        setText(localStorage.getItem(hostname));
+        // setText(localStorage.getItem(hostname));
       }
-      cssText = localStorage.getItem(hostname);
+      ruleObject = JSON.parse(localStorage.getItem(hostname));
     }
 
     listenForClicks();

@@ -3,7 +3,7 @@
 // TODO: switch localStorage -> storage.sync
 
 
-const __debugMode = 1;
+// const __debugMode = 1;
 
 let rulesFile = rules;
 

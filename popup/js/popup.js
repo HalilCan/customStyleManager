@@ -5,7 +5,7 @@ const __debugMode = 1;
 /// PRODUCTION GLOBALS AND CONSTANTS ///
 
 let cssText = "";
-let ruleObjects;
+let ruleObject;
 
 let textBox = document.getElementById("popup-textarea");
 let applyButton = document.getElementById("apply-button");
@@ -19,6 +19,8 @@ let tabUrl;
 
 let cssWasInserted = 0;
 let insertedCss = "";
+
+let author = "taltavaran";
 
 
 if (__debugMode) {
@@ -36,8 +38,8 @@ function populateStorage() {
     console.log(`populateStorage() BEGIN`);
   }
 
-  let defaultRulesObj = {
-    "www.google.com" : {
+  let defaultKey = "www.google.com";
+  let defaultRules = {
       "content": {
         "body" : "background-color: black; color: white'",
         ".hp" : "background-color: blue; border: 1px solid yellow;",
@@ -49,12 +51,11 @@ function populateStorage() {
         "updateDate": "",
         "votes": "0"
       }
-    }
-  };
+    };
 
-  let defaultRulesText = JSON.stringify(defaultRulesObj);
+  let defaultRulesText = JSON.stringify(defaultRules);
 
-  localStorage.setItem('rules', defaultRulesText);
+  localStorage.setItem(defaultKey, defaultRulesText);
 
   if (__debugMode) {
     console.log(`populateStorage() END`); 
@@ -66,44 +67,62 @@ function populateStorage() {
 }
 
 
-function getStorageRules() {
-  if (__debugMode) {
-    console.log(`getStorageRules() BEGIN`); 
+function setRules(hostname, cssText) {
+  let cssObject = cssTextToRules(cssText);
+  console.log(`cssObject in setRules:`);
+  console.log(cssObject);
+
+  let tempStorageObject;
+  let currentDate = printDate();
+
+
+  if (!localStorage.getItem(hostname)) {
+    tempStorageObject = {
+      "content": cssObject,
+      "information": {
+        "author": author,
+        "creationDate": currentDate,
+        "updateDate": currentDate,
+        "votes": "0"
+      }
+    }
+
+    localStorage.setItem(hostname, tempStorageObject);
+  } else {
+    tempStorageObject = JSON.parse(localStorage.getItem(hostname));
+    
+    tempStorageObject.content = cssObject;
+    tempStorageObject.information.author = author;
+    tempStorageObject.information.updateDate = currentDate;
+
+    localStorage.setItem(hostname, tempStorageObject);
   }
-
-  ruleObjects = JSON.parse(localStorage.getItem('rules'));
-
-  return ruleObjects;
 }
 
-
-function getHostnameRules(hostname) {
+function getRules(hostname) {
   if (__debugMode) {
-    console.log(`getHostnameRules(${hostname}) BEGIN`); 
+    console.log(`getRules(${hostname}) BEGIN`); 
   }
   
-  let tempRuleObject = JSON.parse(localStorage.getItem('rules'));
+  if(!localStorage.getItem(hostname)) {
+    return "";
+  }
+
+  let tempRuleObject = JSON.parse(localStorage.getItem(hostname));
   if (__debugMode) {
-    console.log(`tempRuleObject in getHostnameRules:`);
+    console.log(`tempRuleObject in getRules:`);
     console.log(tempRuleObject);
   }
 
-  if (hostname in tempRuleObject) {
-  if (__debugMode) {
-    console.log(`${hostname} found in tempRuleObject:`);
-    console.log(tempRuleObject[hostname]);
-  }
-    return tempRuleObject[hostname];
-  } else {
-    return `${hostname} NOT FOUND in tempRuleObject`;
-  }
+  ruleObject = tempRuleObject;
+  return tempRuleObject;
 }
 
 
 if (__debugMode) {
   console.log(`---storageTest---`); 
 }
-if(!localStorage.getItem('rules')) {
+if(!localStorage.getItem('www.google.com')) {
   populateStorage();
 }
 if (__debugMode) {
@@ -111,15 +130,30 @@ if (__debugMode) {
   console.log(`JSON.parse(localStorage.getItem('rules')) = `);
 }
 
-getStorageRules();
+
 if (__debugMode) {
   console.log(ruleObjects);
-  console.log(`getHostnameRules("www.google.com") =`);
-  console.log(getHostnameRules("www.google.com"));
+  console.log(`getRules("www.google.com") =`);
+  console.log(getRules("www.google.com"));
   console.log(`-------`); 
 }
 
 ///////////////////////////
+
+
+
+/// DATE FUNCTION ///
+
+function printDate() {
+  let today = new Date();
+  let dd = String(today.getDate()).padStart(2, '0');
+  let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = today.getFullYear();
+
+  return mm + '/' + dd + '/' + yyyy;
+}
+
+/////////////////////
 
 
 
@@ -148,15 +182,14 @@ setText("Oops. You should not be seeing this.");
 
 /// JSON OBJECT TO CSS STRING CONVERTER ///
 
-let ruleObjectsToCssString = (ruleObjects, hostname) => {
+function ruleContentToCssString (ruleObject) {
   if (hostnameFound == 0) {
     return "";
   }
 
   let cssString = "";
 
-  let hostObject = ruleObjects[hostname];
-  let ruleContent = hostObject["content"];
+  let ruleContent = ruleObject["content"];
   if (__debugMode) {
     console.log(`ruleContent:`);
     console.log(ruleContent);
@@ -179,6 +212,27 @@ let ruleObjectsToCssString = (ruleObjects, hostname) => {
   return cssString;
 };
 
+function cssTextToRules(styleContent) {
+  let doc = document.implementation.createHTMLDocument(""),
+  styleElement = document.createElement("style");
+
+  styleElement.textContent = styleContent;
+  // the style will only be parsed once it is added to a document
+  doc.body.appendChild(styleElement);
+
+  let cssRules = styleElement.sheet.cssRules;
+
+  if (__debugMode) {
+    console.log(`---cssTextToRules---`);
+    console.log(styleContent);
+    console.log(cssRules);
+    console.log(`--------------`)
+  }
+
+  // doc.body.removeChild(styleElement);
+  return cssRules;
+
+};
 
 ////////////////////////////////////////
 
@@ -210,11 +264,11 @@ let removeCss = (cssString) => {
 ////// ASYNC FUNCTION SERIES BEGIN ///////
 
 let listenForClicks = () => {
-  if (ruleObjects == undefined) {
-    getStorageRules();
+  if (ruleObject == undefined) {
+    let
   }
 
-  cssText = ruleObjectsToCssString(ruleObjects, hostname);
+  cssText = ruleContentToCssString(ruleObject);
   
   if(cssText == "") {
     setText(`${hostname}: There are no custom rules for this page.`);
@@ -271,7 +325,7 @@ function getTabUrl() {
       console.log(`hostname: ${hostname}`);
     }
 
-    if (hostname in ruleObjects) {
+    if (localStorage.getItem(hostname)) {
       hostnameFound = 1;
     }
 

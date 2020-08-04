@@ -1,5 +1,7 @@
 // TODO: host rules online
 // TODO: about:home -like pages don't trigger for some reason. I blame manifest.json.
+// TODO: switch localStorage -> storage.sync
+
 
 const __debugMode = 1;
 
@@ -21,15 +23,15 @@ if (__debugMode) {
 
 ///
 
-if(!localStorage.getItem('rules')) {
+if(!localStorage.getItem('www.google.com')) {
 	populateStorage();
 }
 
 // setStyles();
 
 function populateStorage() {
-	let defaultRulesObj = {
-		"www.google.com" : {
+	let defaultKey = "www.google.com";
+	let defaultRules = {
 			"content": {
 				"body" : "background-color: black; color: white'",
 				".hp" : "background-color: blue; border: 1px solid yellow;",
@@ -41,20 +43,19 @@ function populateStorage() {
 				"updateDate": "",
 				"votes": "0"
 			}
-		}
-	};
+		};
 
-	let defaultRulesText = JSON.stringify(defaultRulesObj);
+	let defaultRulesText = JSON.stringify(defaultRules);
 
-	localStorage.setItem('rules', defaultRulesText);
+	localStorage.setItem(defaultKey, defaultRulesText);
 
 	// localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
 	// localStorage.setItem('font', document.getElementById('font').value);
 	// localStorage.setItem('image', document.getElementById('image').value);
 }
 
-function getHostnameRules() {
-	return localStorage.getItem
+function getHostnameRules(hostname) {
+	return localStorage.getItem(hostname);
 }
 
 function setStyles() {

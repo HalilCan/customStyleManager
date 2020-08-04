@@ -1,7 +1,7 @@
 // TODO: host rules online
 // TODO: about:home -like pages don't trigger for some reason. I blame manifest.json.
 
-const __debugMode = 0;
+const __debugMode = 1;
 
 let rulesFile = rules;
 
@@ -17,6 +17,69 @@ if (__debugMode) {
  	console.log(window.location);
 	console.log(`hostname: ${hostname}`);
 }
+
+
+///
+
+if(!localStorage.getItem('rules')) {
+	populateStorage();
+}
+
+// setStyles();
+
+function populateStorage() {
+	let defaultRulesObj = {
+		"www.google.com" : {
+			"content": {
+				"body" : "background-color: black; color: white'",
+				".hp" : "background-color: blue; border: 1px solid yellow;",
+				"#searchform" : "background-color: red;"
+			},
+			"information": {
+				"author": "",
+				"creationDate": "",
+				"updateDate": "",
+				"votes": "0"
+			}
+		}
+	};
+
+	let defaultRulesText = JSON.stringify(defaultRulesObj);
+
+	localStorage.setItem('rules', defaultRulesText);
+
+	// localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
+	// localStorage.setItem('font', document.getElementById('font').value);
+	// localStorage.setItem('image', document.getElementById('image').value);
+}
+
+function getHostnameRules() {
+	return localStorage.getItem
+}
+
+function setStyles() {
+	// var currentColor = localStorage.getItem('bgcolor');
+	// var currentFont = localStorage.getItem('font');
+	// var currentImage = localStorage.getItem('image');
+
+	// document.getElementById('bgcolor').value = currentColor;
+	// document.getElementById('font').value = currentFont;
+	// document.getElementById('image').value = currentImage;
+
+	// htmlElem.style.backgroundColor = '#' + currentColor;
+	// pElem.style.fontFamily = currentFont;
+	// imgElem.setAttribute('src', currentImage);
+
+
+}
+
+////
+
+
+
+
+
+
 
 let checkLoaded = () => {
 	return document.readyState === "complete" || document.readyState === "interactive";
@@ -122,22 +185,6 @@ let cssTextToRules = (styleContent) => {
 
 };
 
-
-let testCSS = `body {
-border: 5px solid yellow;
-}
-
-.hp {
-background-color: green;
-}
-
-#searchform {
-background-color: blue;
-}
-
-`;
-
-
 if (hostname in ruleObjects) {
 	if (__debugMode) {
 		console.log(`${hostname} found in ruleObjects`);
@@ -150,6 +197,3 @@ if (hostname in ruleObjects) {
 	let cssString = ruleObjectsToCssString(ruleObjects, hostname);
 	let cssApplyResult = applyCssString(cssString);
 }
-
-
-console.log(parseCss(testCSS));

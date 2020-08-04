@@ -5,7 +5,7 @@
   "version": "1.0",
 
   "description": "Custom Style Manager allows domain-level custom CSS styling for any website you visit.",
-  "homepage_url": "https://github.com/HalilCan/leetcode-warmup",
+  "homepage_url": "https://github.com/HalilCan/customStyleManager",
 
   "icons": {
     "48": "icons/paintbrush-icon-48.png",
@@ -15,7 +15,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["rules.json", "customStyleApplier.js"]
+      "js": ["rules.json", "customStyleApplier.js", "storageTest.js"]
     }
   ],
 

@@ -15,7 +15,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["rules.json", "customStyleApplier.js", "storageTest.js"]
+      "js": ["rules.json", "customStyleApplier.js"]
     }
   ],
 

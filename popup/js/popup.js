@@ -1,8 +1,11 @@
+// TODO: refresh on active tab change
+
 const __debugMode = 1;
 
+/// PRODUCTION GLOBALS AND CONSTANTS ///
+
 let cssText = "";
-let rulesFile = rules;
-let ruleObjects = rulesFile["ruleObjects"];
+let ruleObjects;
 
 let textBox = document.getElementById("popup-textarea");
 let applyButton = document.getElementById("apply-button");
@@ -22,6 +25,106 @@ if (__debugMode) {
   console.log("ALIVE");
 }
 
+////////////////////////////////////////
+
+
+
+/// STORAGE INTEGRATION ///
+
+function populateStorage() {
+  if (__debugMode) {
+    console.log(`populateStorage() BEGIN`);
+  }
+
+  let defaultRulesObj = {
+    "www.google.com" : {
+      "content": {
+        "body" : "background-color: black; color: white'",
+        ".hp" : "background-color: blue; border: 1px solid yellow;",
+        "#searchform" : "background-color: red;"
+      },
+      "information": {
+        "author": "",
+        "creationDate": "",
+        "updateDate": "",
+        "votes": "0"
+      }
+    }
+  };
+
+  let defaultRulesText = JSON.stringify(defaultRulesObj);
+
+  localStorage.setItem('rules', defaultRulesText);
+
+  if (__debugMode) {
+    console.log(`populateStorage() END`); 
+  }
+
+  // localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
+  // localStorage.setItem('font', document.getElementById('font').value);
+  // localStorage.setItem('image', document.getElementById('image').value);
+}
+
+
+function getStorageRules() {
+  if (__debugMode) {
+    console.log(`getStorageRules() BEGIN`); 
+  }
+
+  ruleObjects = JSON.parse(localStorage.getItem('rules'));
+
+  return ruleObjects;
+}
+
+
+function getHostnameRules(hostname) {
+  if (__debugMode) {
+    console.log(`getHostnameRules(${hostname}) BEGIN`); 
+  }
+  
+  let tempRuleObject = JSON.parse(localStorage.getItem('rules'));
+  if (__debugMode) {
+    console.log(`tempRuleObject in getHostnameRules:`);
+    console.log(tempRuleObject);
+  }
+
+  if (hostname in tempRuleObject) {
+  if (__debugMode) {
+    console.log(`${hostname} found in tempRuleObject:`);
+    console.log(tempRuleObject[hostname]);
+  }
+    return tempRuleObject[hostname];
+  } else {
+    return `${hostname} NOT FOUND in tempRuleObject`;
+  }
+}
+
+
+if (__debugMode) {
+  console.log(`---storageTest---`); 
+}
+if(!localStorage.getItem('rules')) {
+  populateStorage();
+}
+if (__debugMode) {
+  console.log(`getting from storage`);
+  console.log(`JSON.parse(localStorage.getItem('rules')) = `);
+}
+
+getStorageRules();
+if (__debugMode) {
+  console.log(ruleObjects);
+  console.log(`getHostnameRules("www.google.com") =`);
+  console.log(getHostnameRules("www.google.com"));
+  console.log(`-------`); 
+}
+
+///////////////////////////
+
+
+
+/// TEXTBOX INTERACTION ///
+
 
 let setText = (newText) => {
   if (__debugMode) {
@@ -37,8 +140,13 @@ let getText = () => {
   return textBox.value;
 }
 
-setText("1111");
+setText("Oops. You should not be seeing this.");
 
+//////////////////////////
+
+
+
+/// JSON OBJECT TO CSS STRING CONVERTER ///
 
 let ruleObjectsToCssString = (ruleObjects, hostname) => {
   if (hostnameFound == 0) {
@@ -72,20 +180,11 @@ let ruleObjectsToCssString = (ruleObjects, hostname) => {
 };
 
 
-let applyCssString = (cssString) => {
-  let newStyleSheet = document.createElement("style");
-  newStyleSheet.type = "text/css";
-  newStyleSheet.appendChild(document.createTextNode(cssString));
-  document.head.appendChild(newStyleSheet);
+////////////////////////////////////////
 
 
-  if (__debugMode) {
-    console.log(`---applyCssString---`);
-    console.log(`newStyleSheet:`);
-    console.log(newStyleSheet); 
-    console.log(`---------------`); 
-  }
-};
+
+/// POPUP-TAB (ACTIVE) CSS INSERTION AND DELETION ///
 
 let insertCss = (cssString) => {
   browser.tabs.insertCSS({code: cssString}).then(() => {
@@ -101,79 +200,20 @@ let insertCss = (cssString) => {
 let removeCss = (cssString) => {
   browser.tabs.removeCss({code: cssString}).then(() => {
     insertedCss = "";
-    // let url = beastNameToURL(e.target.textContent);
-    // browser.tabs.sendMessage(tabs[0].id, {
-    //   command: "beastify",
-    //   beastURL: url
-    // });
   });
 }
 
-
-let parseCss = (styleContent) => {
-  let doc = document.implementation.createHTMLDocument(""),
-  styleElement = document.createElement("style");
-
-  styleElement.textContent = styleContent;
-  // the style will only be parsed once it is added to a document
-  doc.body.appendChild(styleElement);
-
-  let cssRules = styleElement.sheet.cssRules;
-
-  if (__debugMode) {
-    console.log("parsed CSS rules:");
-    console.log(cssRules);
-    console.log(cssRules[0]);
-    console.log(cssRules[0].cssText);
-  }
-
-  // doc.body.removeChild(styleElement);
-  return cssRulesToText(cssRules);
-};
-
-
-let cssRulesToText = (cssRules) => {
-  let string = "";
-  for (let i = 0; i < cssRules.length; i ++) {
-    string += cssRules[i].cssText;
-    string += `\n\n`;
-  }
-  if(__debugMode) {
-    console.log(`---cssRulesToText---`);
-    console.log(cssRules);
-    console.log(string);
-    console.log(`---------`);
-  }
-  return string;
-};
-
-
-let cssTextToRules = (styleContent) => {
-  let doc = document.implementation.createHTMLDocument(""),
-  styleElement = document.createElement("style");
-
-  styleElement.textContent = styleContent;
-  // the style will only be parsed once it is added to a document
-  doc.body.appendChild(styleElement);
-
-  let cssRules = styleElement.sheet.cssRules;
-
-  if (__debugMode) {
-    console.log(`---cssTextToRules---`);
-    console.log(styleContent);
-    console.log(cssRules);
-    console.log(`--------------`)
-  }
-
-  // doc.body.removeChild(styleElement);
-  return cssRules;
-
-};
+//////////////////////////////////////////////////////
 
 
 
+////// ASYNC FUNCTION SERIES BEGIN ///////
 
 let listenForClicks = () => {
+  if (ruleObjects == undefined) {
+    getStorageRules();
+  }
+
   cssText = ruleObjectsToCssString(ruleObjects, hostname);
   
   if(cssText == "") {
@@ -241,5 +281,6 @@ function getTabUrl() {
 
 }
 
+//////////////////////////////////
 
 window.onload = getTabUrl;

@@ -191,6 +191,10 @@ function isAlphaNumeric(code) {
           (code > 96 && code < 123)); // lower alpha (a-z)
 }
 
+function isSpace(code) {
+  return (code == 32);
+}
+
 function isValidSelectorChar(code) {
   return  (isAlphaNumeric(code) || // lower alpha (a-z)
           (code == 46) || (code == 35) || // . 46, # 35 
@@ -241,6 +245,9 @@ function cssTextToRules(styleContent) {
 
     if(inPara == 0 && inSelector == 0) {
       if (isValidSelectorChar(ch)) {
+        if (isSpace(ch)) {
+          continue;
+        }
         inPara = 0;
         inSelector = 1;
         tempKey += String.fromCharCode(ch);

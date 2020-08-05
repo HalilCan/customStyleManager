@@ -9,6 +9,7 @@
 
 1.0.3:
  - + Fix "ghost spaces"
+ - + Add progressive and even more complex selector support
 
 1.0.2:
  - + Fix weird refresh behavior

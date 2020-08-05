@@ -175,7 +175,7 @@ function ruleContentToCssString (ruleContent) {
       }
 
 
-      tempCssString += `${key}{${ruleText}}\n\n`;
+      tempCssString += `${key}{${ruleText}}`;
       }
   }
 
@@ -195,12 +195,20 @@ function isSpace(code) {
   return (code == 32);
 }
 
+function isComplexSelectorChar(code) {
+  // [=91 ]=93 >=62 _=44 -=45 ~=126 ^=94 $=36 *=42 ==61 :=58 (=40 )=41 
+  // 
+}
+
 function isValidSelectorChar(code) {
-  return  (isAlphaNumeric(code) || // lower alpha (a-z)
-          (code == 46) || (code == 35) || // . 46, # 35 
-          (code == 95) || (code == 45) || //_ and -
-          (code == 44) || (code == 32) // ","" and " "
-          ); 
+  // return  (isAlphaNumeric(code) ||
+  //         (code == 46) || (code == 35) || // . 46, # 35 
+  //         (code == 95) || (code == 45) || //_ and -
+  //         (code == 44) || (code == 32) || // ","" and " "
+  //         (code == 62) // "> for prog. selectors"
+  //         ); 
+  // newline used for more complex selectors (e.g. conditionals)?
+  return (!isOpeningBrace(code) && !isClosingBrace(code));
 }
 
 function isOpeningBrace(charcode) {
@@ -211,6 +219,10 @@ function isOpeningBrace(charcode) {
 function isClosingBrace(charcode) {
   // } 125   
   return (charcode == 125);
+}
+
+function isNewline(charcode) {
+  return (String.fromCharCode(charcode) == "\n" || charcode == 10 || charcode == 13);
 }
 
 function cssTextToRules(styleContent) {
@@ -351,6 +363,7 @@ let listenForClicks = () => {
     if (__debugMode) {
       console.log(`custom rules for ${hostname} not found`);
       console.log(ruleObject);
+      setText(`${hostname}: There are no custom rules for this page.`); 
       // setText(JSON.stringify(ruleObject));
     } else {
       setText(`${hostname}: There are no custom rules for this page.`); 

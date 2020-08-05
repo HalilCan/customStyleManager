@@ -2,6 +2,7 @@
 
 const __debugMode = 0;
 const styleSheetId = "userStyleSheet-CSM";
+const __version = "1.0.3";
 
 let loadOnloadFired = 0;
 
@@ -229,25 +230,26 @@ browser.runtime.onMessage.addListener((message) => {
 
 // window.onload = checkAndApplyStyles;
 
-window.addEventListener('load', function (){
-	if(__debugMode) {
-		console.log(`window.load event fired!`);
-	}
-	if (loadOnloadFired == 0) {
-    	checkAndApplyStyles();		
-	}
-});
+// window.addEventListener('load', function (){
+// 	if(__debugMode) {
+// 		console.log(`window.load event fired!`);
+// 	}
+// 	if (loadOnloadFired == 0) {
+//     	checkAndApplyStyles();		
+// 	}
+// });
 
-window.attachEvent('onload', function (){
-	if(__debugMode) {
-		console.log(`window.onload event fired!`);
-	}
-	if (loadOnloadFired == 0) {
-    	checkAndApplyStyles();		
-	}
-});
+// window.attachEvent('onload', function (){
+// 	if(__debugMode) {
+// 		console.log(`window.onload event fired!`);
+// 	}
+// 	if (loadOnloadFired == 0) {
+//     	checkAndApplyStyles();		
+// 	}
+// });
 
-if (loadOnloadFired == 0) {
-	//which will probably be true at this stage
-    checkAndApplyStyles();
+if (__debugMode) {
+	console.log(`current version:`);
+	console.log(__version);	
 }
+checkAndApplyStyles();

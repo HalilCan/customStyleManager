@@ -82,7 +82,6 @@ function setRules(activeTab, hostname, cssText, callback) {
         console.log(JSON.parse(res[hostname]));
       }
 
-      //TODO: check if this fits
       tempStorageObject = JSON.parse(res[hostname]);
 
       tempStorageObject.content = cssObject;

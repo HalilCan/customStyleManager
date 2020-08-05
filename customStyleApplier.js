@@ -1,6 +1,4 @@
 // TODO: host rules online
-// TODO: about:home -like pages don't trigger for some reason. I blame manifest.json.
-// TODO: switch browser.storage.local -> browser.storage.local
 
 
 const __debugMode = 0;
@@ -128,7 +126,6 @@ let checkAndApplyStyles = () => {
 			if (__debugMode) {
 				console.log(`${hostname} not found in browser.storage.local rules`); 
 			} 
-			// TODO?
 		} else {
 			if (__debugMode) {
 				console.log(`${hostname} rules were found in browser.storage.local rules`); 
@@ -136,9 +133,7 @@ let checkAndApplyStyles = () => {
 				console.log(hostRules);
 				console.log(`JSON.parse(hostRules[hostname])`);
 				console.log(JSON.parse(hostRules[hostname]));
-				// setText(browser.storage.sync.get(hostname));
 			}
-			//TODO: JSON.parse causes problems with get results.
 			let tempRuleObject = JSON.parse(hostRules[hostname]);
 			let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
 			let cssApplyResult = applyCssString(cssString);
@@ -178,8 +173,6 @@ function saveRulesAsync(newHostname, ruleString, callback) {
     console.log(callback);
     console.log(`-----------`)
   }
-
-  //TODO global hostname as opposed to passed hostname
 
   let setRulePromise = browser.storage.sync.set({
     [tempHostname]: ruleString

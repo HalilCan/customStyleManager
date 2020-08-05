@@ -2,6 +2,7 @@
 
   "manifest_version": 2,
   "name": "Custom Style Manager",
+  "author": "Taltavaran",
   "version": "1.0",
 
   "description": "Custom Style Manager allows domain-level custom CSS styling for any website you visit.",

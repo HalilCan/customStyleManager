@@ -1,6 +1,5 @@
 // TODO: host rules online
 
-
 const __debugMode = 0;
 
 const hostname = window.location.hostname;
@@ -49,7 +48,7 @@ function getHostnameRules(hostname, callback) {
 }
 
 
-let applyCssString = (cssString) => {
+function applyCssString (cssString) {
 	let newStyleSheet = document.createElement("style");
 	newStyleSheet.type = "text/css";
 	newStyleSheet.appendChild(document.createTextNode(cssString));
@@ -201,7 +200,11 @@ function saveRulesAsync(newHostname, ruleString, callback) {
 browser.runtime.onMessage.addListener((message) => {
 	if (message.command === "saveRules") {
 	  saveRulesAsync(message.hostname, message.ruleString, 
-	  	(() => {console.log(`saveRulesAsync DONE`);})
+	  	(() => {
+	  		if (__debugMode) {
+	  			console.log(`saveRulesAsync DONE`);	  			
+	  		}
+	  	})
 	  	);
 	}
 });

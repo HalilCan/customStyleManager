@@ -21,7 +21,8 @@ let tabUrl;
 let cssWasInserted = 0;
 let insertedCss = "";
 
-let author = "taltavaran";
+let author = "";
+//TODO: get FF username or ask for author name at startup/in settings.
 
 
 if (__debugMode) {

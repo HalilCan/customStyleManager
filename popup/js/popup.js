@@ -175,7 +175,7 @@ function ruleContentToCssString (ruleContent) {
       }
 
 
-      tempCssString += `${key} {${ruleText}}\n\n`;
+      tempCssString += `${key}{${ruleText}}\n\n`;
       }
   }
 

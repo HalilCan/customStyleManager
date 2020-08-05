@@ -2,8 +2,8 @@
 
   "manifest_version": 2,
   "name": "Custom Style Manager",
-  "author": "Taltavaran",
-  "version": "1.0",
+  "author": "Halil Can",
+  "version": "1.0.2",
 
   "description": "Custom Style Manager allows domain-level custom CSS styling for any website you visit.",
   "homepage_url": "https://github.com/HalilCan/customStyleManager",

@@ -338,6 +338,28 @@ let checkAndApplyStyles = () => {
 
 }
 
+/*
+
+19
+
+It's 2016, and Chrome (and Firefox, and Edge - everyone using Chrome extension model) support ES6 Computed Property Names.
+
+With that, the task becomes simpler:
+
+var storage = chrome.storage.local;
+var v1 = 'k1';
+
+storage.set({
+  [v1]: 's1' // Will evaluate v1 as property name
+});
+
+storage.get(v1, function(result) {
+    console.log(v1, result);
+});
+
+
+*/
+
 ///////// RULE SYNC //////////////////
 
 
@@ -352,8 +374,10 @@ function saveRulesAsync(newHostname, ruleString, callback) {
     console.log(`-----------`)
   }
 
+  //TODO global hostname as opposed to passed hostname
+
   let setRulePromise = browser.storage.local.set({
-    (tempHostname.valueOf()): ruleString
+    [tempHostname]: ruleString
   });
 
   setRulePromise.then((err) => {

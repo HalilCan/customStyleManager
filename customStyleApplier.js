@@ -21,13 +21,13 @@ if (__debugMode) {
 /// SYNC STORAGE PROOF OF CONCEPT //
 
 if (__debugMode) {
-	let storageTest = browser.storage.local.set({
+	let storageTest = browser.storage.sync.set({
 		'color': 'black'
 	})
 
 	storageTest.then((err) => {
 		if (!err) {
-			let storageItem = browser.storage.local.get('color');
+			let storageItem = browser.storage.sync.get('color');
 			storageItem.then((res) => {
 				console.log(res)
 				console.log(`Managed color is: ${res.color}`);
@@ -53,7 +53,7 @@ if (__debugMode) {
 
 
 function getHostnameRules(hostname, callback) {
-	browser.storage.local.get(hostname)
+	browser.storage.sync.get(hostname)
 	.then((result) => callback(result));
 }
 
@@ -198,11 +198,11 @@ let checkAndApplyStyles = () => {
     };
     let defaultRuleString = JSON.stringify(defaultRules);
 
-   //  let checkDefaultPromise = browser.storage.local.get(defaultKey);
+   //  let checkDefaultPromise = browser.storage.sync.get(defaultKey);
 
    //  checkDefaultPromise.then((res) => {
    //  	if (!res[defaultKey]) {
-			// browser.storage.local.set({
+			// browser.storage.sync.set({
 			// 	defaultKey: defaultRuleString
 			// }).then((setError) => {
 			// 	if (setError) {
@@ -221,8 +221,8 @@ let checkAndApplyStyles = () => {
 			// 	// 	}
 			// 	// 	console.log("browser.storage:");
 			// 	// 	console.log(browser.storage);
-			// 	// 	console.log(`browser.storage.local.get(${hostname})`);
-			// 	// 	browser.storage.local.get(hostname)
+			// 	// 	console.log(`browser.storage.sync.get(${hostname})`);
+			// 	// 	browser.storage.sync.get(hostname)
 			// 	// 	.then((result) => {
 			// 	// 		console.log(`.get result (toString and object): `)
 			// 	// 		console.log(result.toString());
@@ -237,7 +237,7 @@ let checkAndApplyStyles = () => {
 			// 		console.log(hostname == 'www.google.com');
 			// 	}
 
-			// 	browser.storage.local.get(hostname)
+			// 	browser.storage.sync.get(hostname)
 			// 	.then(hostRules => {
 			// 		if(!hostRules) {
 			// 			if (__debugMode) {
@@ -251,7 +251,7 @@ let checkAndApplyStyles = () => {
 			// 				console.log(hostRules);
 			// 				console.log(`JSON.parse(hostRules[hostname])`);
 			// 				console.log(JSON.parse(hostRules[hostname]));
-			// 				// setText(browser.storage.local.get(hostname));
+			// 				// setText(browser.storage.sync.get(hostname));
 			// 			}
 			// 			//TODO: JSON.parse causes problems with get results.
 			// 			let tempRuleObject = JSON.parse(hostRules[hostname]);
@@ -267,7 +267,7 @@ let checkAndApplyStyles = () => {
 			// 		console.log(hostname == 'www.google.com');
 			// 	}
 
-			// 	browser.storage.local.get(hostname)
+			// 	browser.storage.sync.get(hostname)
 			// 	.then(hostRules => {
 			// 		if(!hostRules) {
 			// 			if (__debugMode) {
@@ -281,7 +281,7 @@ let checkAndApplyStyles = () => {
 			// 				console.log(hostRules);
 			// 				console.log(`JSON.parse(hostRules[hostname])`);
 			// 				console.log(JSON.parse(hostRules[hostname]));
-			// 				// setText(browser.storage.local.get(hostname));
+			// 				// setText(browser.storage.sync.get(hostname));
 			// 			}
 			// 			//TODO: JSON.parse causes problems with get results.
 			// 			let tempRuleObject = JSON.parse(hostRules[hostname]);
@@ -297,7 +297,7 @@ let checkAndApplyStyles = () => {
 		console.log(hostname == 'www.google.com');
 	}
 
-	browser.storage.local.get(hostname)
+	browser.storage.sync.get(hostname)
 	.then(hostRules => {
 		if(!hostRules || !hostRules[hostname]) {
 			if (__debugMode) {
@@ -311,7 +311,7 @@ let checkAndApplyStyles = () => {
 				console.log(hostRules);
 				console.log(`JSON.parse(hostRules[hostname])`);
 				console.log(JSON.parse(hostRules[hostname]));
-				// setText(browser.storage.local.get(hostname));
+				// setText(browser.storage.sync.get(hostname));
 			}
 			//TODO: JSON.parse causes problems with get results.
 			let tempRuleObject = JSON.parse(hostRules[hostname]);
@@ -320,7 +320,7 @@ let checkAndApplyStyles = () => {
 		}
 	});
 
-	// if(!browser.storage.local.get(hostname)) {
+	// if(!browser.storage.sync.get(hostname)) {
 	// 	if (__debugMode) {
 	// 		console.log(`${hostname} not found in browser.storage.local rules`); 
 	// 		console.log(browser.storage.local);
@@ -329,10 +329,10 @@ let checkAndApplyStyles = () => {
 	// } else {
 	// 	if (__debugMode) {
 	// 		console.log(`${hostname} WAS found in browser.storage.local rules`); 
-	// 		console.log(JSON.parse(browser.storage.local.get(hostname)));
-	// 		// setText(browser.storage.local.get(hostname));
+	// 		console.log(JSON.parse(browser.storage.sync.get(hostname)));
+	// 		// setText(browser.storage.sync.get(hostname));
 	// 	}
-	// 	let tempRuleObject = JSON.parse(browser.storage.local.get(hostname));
+	// 	let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
 	// 	let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
 	// 	let cssApplyResult = applyCssString(cssString);
 	// }
@@ -377,7 +377,7 @@ function saveRulesAsync(newHostname, ruleString, callback) {
 
   //TODO global hostname as opposed to passed hostname
 
-  let setRulePromise = browser.storage.local.set({
+  let setRulePromise = browser.storage.sync.set({
     [tempHostname]: ruleString
   });
 

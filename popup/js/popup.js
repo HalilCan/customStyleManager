@@ -10,6 +10,7 @@ let ruleObject = {};
 let textBox = document.getElementById("popup-textarea");
 let applyButton = document.getElementById("apply-button");
 let resetButton = document.getElementById("reset-button");
+let hostnameContainer = document.getElementById("hostname-container");
 
 let hostnameFound = 0;
 let hostname;
@@ -53,23 +54,23 @@ if (__debugMode) {
 //       }
 //     };
 
-// if (!browser.storage.local.get(defaultKey)) {
+// if (!browser.storage.sync.get(defaultKey)) {
 //     let defaultRulesText = JSON.stringify(defaultRules);
 
-//     browser.storage.local.set({
+//     browser.storage.sync.set({
 //       defaultKey: defaultRulesText
 //     });
 
-//     console.log(browser.storage.local.get(defaultKey));
+//     console.log(browser.storage.sync.get(defaultKey));
 //   }
 
 //   if (__debugMode) {
 //     console.log(`populateStorage() END`); 
 //   }
 
-//   // browser.storage.local.set('bgcolor', document.getElementById('bgcolor').value);
-//   // browser.storage.local.set('font', document.getElementById('font').value);
-//   // browser.storage.local.set('image', document.getElementById('image').value);
+//   // browser.storage.sync.set('bgcolor', document.getElementById('bgcolor').value);
+//   // browser.storage.sync.set('font', document.getElementById('font').value);
+//   // browser.storage.sync.set('image', document.getElementById('image').value);
 // }
 
 
@@ -83,7 +84,7 @@ function saveRulesAsync(hostname, ruleString, callback) {
   }
 
 
-  let setRulePromise = browser.storage.local.set({
+  let setRulePromise = browser.storage.sync.set({
     hostname: ruleString
   });
 
@@ -111,7 +112,7 @@ function setRules(activeTab, hostname, cssText, callback) {
   let tempStorageObject;
   let currentDate = printDate();
 
-  let getHostnamePromise = browser.storage.local.get(hostname);
+  let getHostnamePromise = browser.storage.sync.get(hostname);
 
   getHostnamePromise.then((res) => {
     if (__debugMode) {
@@ -178,11 +179,11 @@ function setRules(activeTab, hostname, cssText, callback) {
 //     console.log(`getRules(${hostname}) BEGIN`); 
 //   }
   
-//   if(!browser.storage.local.get(hostname)) {
+//   if(!browser.storage.sync.get(hostname)) {
 //     return "";
 //   }
 
-//   let tempRuleObject = JSON.parse(browser.storage.local.get(hostname));
+//   let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
 //   if (__debugMode) {
 //     console.log(`tempRuleObject in getRules:`);
 //     console.log(tempRuleObject);
@@ -507,7 +508,7 @@ function getTabUrl() {
       console.log(`hostname: ${hostname}`);
     }
 
-    let getHostnamePromise = browser.storage.local.get(hostname);
+    let getHostnamePromise = browser.storage.sync.get(hostname);
 
     getHostnamePromise.then((res) => {
       if (__debugMode) {
@@ -523,7 +524,7 @@ function getTabUrl() {
       // if (__debugMode) {
       //   console.log(`---storageTest---`); 
       // }
-      // if(!browser.storage.local.get('www.google.com')) {
+      // if(!browser.storage.sync.get('www.google.com')) {
       //   if (__debugMode) {
       //     console.log(`www.google.com not found in browser.storage.local rules`); 
       //   }
@@ -531,7 +532,7 @@ function getTabUrl() {
       // } else {
       //   if (__debugMode) {
       //     console.log(`www.google.com WAS found in browser.storage.local rules`); 
-      //     console.log(JSON.parse(browser.storage.local.get(`www.google.com`)));
+      //     console.log(JSON.parse(browser.storage.sync.get(`www.google.com`)));
       //   }
       // }
 
@@ -545,7 +546,7 @@ function getTabUrl() {
           console.log(`${hostname} WAS found in browser.storage.local rules`); 
           console.log(hostname);
           console.log(JSON.parse(res[hostname]));
-          // setText(browser.storage.local.get(hostname));
+          // setText(browser.storage.sync.get(hostname));
         }
         ruleObject = JSON.parse(res[hostname]);
       }

@@ -52,9 +52,24 @@ body {
 
 #popup-viewport {
 	width: 370px;
-	height: 420px;
+	height: 400px;
 }
 
+#hostname-container {
+	display: none;
+
+	width: 370px;
+	height: 25px;
+	
+	margin-bottom: 5px;
+
+	font-size: 1em;
+
+	color: black;
+	
+	border: 1px solid black;
+	border-radius: 4px;
+}
 
 #textbox-container {
 	width: 100%;
@@ -63,7 +78,7 @@ body {
 
 #popup-textarea {
 	width: 370px;
-	height: 340px;
+	height: 310px;
 
 	margin-bottom: 10px;
 

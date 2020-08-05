@@ -34,11 +34,8 @@
 
    "browser_specific_settings" : {
    	"gecko": {
-   		"id": "custom_style_manager@outlook.com"
+   		"id": "talimilat@outlook.com"
    	}
    }
-
-//editor not yet 
 }
 
-//Reading manifest: Error processing content_scripts.0.matches.0: Value "*://*.*.*/*" must either: be one of ["<all_urls>"], must either [match the pattern /^(https?|wss?|file|ftp|\*):\/\/(\*|\*\.[^*/]+|[^*/]+)\/.*$/, or match the pattern /^file:\/\/\/.*$/], or match the pattern /^resource:\/\/(\*|\*\.[^*/]+|[^*/]+)\/.*$|^about:/

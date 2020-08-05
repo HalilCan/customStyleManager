@@ -1,6 +1,7 @@
 // TODO: refresh on active tab change
+// TODO: *** support complex selectors
 
-const __debugMode = 0;
+const __debugMode = 1;
 
 /// PRODUCTION GLOBALS AND CONSTANTS ///
 
@@ -301,7 +302,7 @@ let insertCss = (cssString) => {
 
 let removeCss = (cssString) => {
   if (insertedCss != "") {
-    browser.tabs.removeCss({code: insertedCss}).then(() => {
+    browser.tabs.removeCss({code: cssString}).then(() => {
       insertedCss = "";
     }); 
   }

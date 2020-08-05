@@ -1,6 +1,6 @@
 // TODO: refresh on active tab change
 
-const __debugMode = 1;
+const __debugMode = 0;
 
 /// PRODUCTION GLOBALS AND CONSTANTS ///
 

@@ -3,7 +3,7 @@
 // TODO: switch browser.storage.local -> browser.storage.local
 
 
-const __debugMode = 1;
+const __debugMode = 0;
 
 const hostname = window.location.hostname;
 if (hostname == "") {

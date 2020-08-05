@@ -31,9 +31,11 @@
      "default_popup": "popup/style_editor.html"
    },
 
-  "web_accessible_resources" : [
-  	"rules.json"
-  ]
+   "browser_specific_settings" : {
+   	"gecko": {
+   		"id": "custom_style_manager@outlook.com"
+   	}
+   }
 
 //editor not yet 
 }

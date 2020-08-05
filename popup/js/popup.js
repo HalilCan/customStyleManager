@@ -33,90 +33,124 @@ if (__debugMode) {
 
 /// STORAGE INTEGRATION ///
 
-function populateStorage() {
-  if (__debugMode) {
-    console.log(`populateStorage() BEGIN`);
-  }
+// function populateStorage() {
+//   if (__debugMode) {
+//     console.log(`populateStorage() BEGIN`);
+//   }
 
-  let defaultKey = "www.google.com";
-  let defaultRules = {
-      "content": {
-        "body" : "background-color: black; color: white;",
-        ".hp" : "background-color: blue; border: 1px solid yellow;",
-        "#searchform" : "background-color: red;"
-      },
-      "information": {
-        "author": "",
-        "creationDate": "",
-        "updateDate": "",
-        "votes": "0"
-      }
-    };
+//   let defaultKey = "www.google.com";
+//   let defaultRules = {
+//       "content": {
+//         "body" : "background-color: black; color: white;",
+//         ".hp" : "background-color: blue; border: 1px solid yellow;",
+//         "#searchform" : "background-color: red;"
+//       },
+//       "information": {
+//         "author": "",
+//         "creationDate": "",
+//         "updateDate": "",
+//         "votes": "0"
+//       }
+//     };
 
-  let defaultRulesText = JSON.stringify(defaultRules);
+// if (!browser.storage.sync.get(defaultKey)) {
+//     let defaultRulesText = JSON.stringify(defaultRules);
 
-  localStorage.setItem(defaultKey, defaultRulesText);
+//     browser.storage.sync.set({
+//       defaultKey: defaultRulesText
+//     });
 
-  if (__debugMode) {
-    console.log(`populateStorage() END`); 
-  }
+//     console.log(browser.storage.sync.get(defaultKey));
+//   }
 
-  // localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
-  // localStorage.setItem('font', document.getElementById('font').value);
-  // localStorage.setItem('image', document.getElementById('image').value);
-}
+//   if (__debugMode) {
+//     console.log(`populateStorage() END`); 
+//   }
+
+//   // browser.storage.sync.set('bgcolor', document.getElementById('bgcolor').value);
+//   // browser.storage.sync.set('font', document.getElementById('font').value);
+//   // browser.storage.sync.set('image', document.getElementById('image').value);
+// }
 
 
 function setRules(hostname, cssText) {
   let cssObject = cssTextToRules(cssText);
-  console.log(`cssObject in setRules:`);
-  console.log(cssObject);
+  if (__debugMode) {
+    console.log(`cssObject in setRules:`);
+    console.log(cssObject); 
+  }
 
   let tempStorageObject;
   let currentDate = printDate();
 
+  let getHostnamePromise = browser.storage.sync.get(hostname);
 
-  if (!localStorage.getItem(hostname)) {
-    tempStorageObject = {
-      "content": cssObject,
-      "information": {
-        "author": author,
-        "creationDate": currentDate,
-        "updateDate": currentDate,
-        "votes": "0"
-      }
+  getHostnamePromise.then((res) => {
+    if (__debugMode) {
+      console.log(`setRules > getHostnamePromise > res`);
+      console.log(res);
     }
 
-    localStorage.setItem(hostname, JSON.stringify(tempStorageObject));
-  } else {
-    tempStorageObject = JSON.parse(localStorage.getItem(hostname));
+    if (!res) {
+      if (__debugMode) {
+        console.log(`${hostname} NOT found in browser.storage.sync in setRules`);
+      }
 
-    tempStorageObject.content = cssObject;
-    tempStorageObject.information.author = author;
-    tempStorageObject.information.updateDate = currentDate;
+      tempStorageObject = {
+        "content": cssObject,
+        "information": {
+          "author": author,
+          "creationDate": currentDate,
+          "updateDate": currentDate,
+          "votes": "0"
+        }
+      }
 
-    localStorage.setItem(hostname, JSON.stringify(tempStorageObject));
-  }
+      browser.storage.sync.set({
+        hostname: JSON.stringify(tempStorageObject)
+      });
+      //TODO: handle async
+    } else {
+
+      if (__debugMode) {
+        console.log(`${hostname} was found in browser.storage.sync in setRules`);
+        console.log(`existing ${hostname} rules:`);
+        console.log(JSON.parse(res);
+      }
+
+      //TODO: check if this fits
+      tempStorageObject = JSON.parse(res);
+
+      tempStorageObject.content = cssObject;
+      tempStorageObject.information.author = author;
+      tempStorageObject.information.updateDate = currentDate;
+
+      browser.storage.sync.set({
+        hostname: JSON.stringify(tempStorageObject)
+      });
+      //TODO: handle async
+    }
+  });
 }
 
-function getRules(hostname) {
-  if (__debugMode) {
-    console.log(`getRules(${hostname}) BEGIN`); 
-  }
+// function getRules(hostname) {
+//   if (__debugMode) {
+//     console.log(`getRules(${hostname}) BEGIN`); 
+//   }
   
-  if(!localStorage.getItem(hostname)) {
-    return "";
-  }
+//   if(!browser.storage.sync.get(hostname)) {
+//     return "";
+//   }
 
-  let tempRuleObject = JSON.parse(localStorage.getItem(hostname));
-  if (__debugMode) {
-    console.log(`tempRuleObject in getRules:`);
-    console.log(tempRuleObject);
-  }
+//   let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
+//   if (__debugMode) {
+//     console.log(`tempRuleObject in getRules:`);
+//     console.log(tempRuleObject);
+//   }
 
-  ruleObject = tempRuleObject;
-  return tempRuleObject;
-}
+//   ruleObject = tempRuleObject;
+//   return tempRuleObject;
+// }
 
 ///////////////////////////
 
@@ -191,7 +225,7 @@ function ruleContentToCssString (ruleContent) {
       }
 
 
-      tempCssString += `${key} {\n${ruleText}\n}\n`;
+      tempCssString += `${key} {${ruleText}}\n\n`;
       }
   }
 
@@ -205,7 +239,8 @@ function isValidSelectorChar(code) {
   return  ((code > 47 && code < 58) || // numeric (0-9)
           (code > 64 && code < 91) || // upper alpha (A-Z)
           (code > 96 && code < 123) || // lower alpha (a-z)
-          (code == 46) || (code == 35)); // . 46, # 35 
+          (code == 46) || (code == 35) || // . 46, # 35 
+          (code == 95) || (code == 45)); // _ and -
 }
 
 function isOpeningBrace(charcode) {
@@ -232,10 +267,20 @@ function cssTextToRules(styleContent) {
   let tempValue = "";
   let ch;
 
+  let newlineAdded = 0;
+
   for (let i = 0 ; i < styleContent.length; i ++) {
     ch = styleContent.charCodeAt(i);
-    if (ch == 10 || ch == 13) {
-      continue; //CR/newline
+    if ((ch == 10 || ch == 13) && inPara == 1) {
+      if (newlineAdded == 0) {
+        tempValue += '\n';
+        newlineAdded = 1;
+        continue;
+      } else {
+        continue;
+      }
+    } else {
+      newlineAdded = 0;
     }
 
     if(inPara == 0 && inSelector == 0) {
@@ -254,7 +299,7 @@ function cssTextToRules(styleContent) {
         continue;
       } else {
         inPara = 1;
-        inSelector = 0;        
+        inSelector = 0;      
         //TODO: What would this scenario look like?
       }
       continue;
@@ -353,22 +398,41 @@ let listenForClicks = () => {
     let targetId = e.target.id;
 
     if (targetId == "apply-button") {
-
-      if (cssWasInserted) {
-        removeCss(insertedCss);
-      }
-
-      let newText = getText();
-
-      insertCss(newText);
-      setRules(hostname, newText);
-      // TODO: timer-based color fade reset button for "undo functionality"
+      applyRules();      
     } else if (targetId == "reset-button") {
+      // TODO: timer-based color fade reset button for "undo functionality"
       setText(cssText);
     }
   })
 };
 
+function applyRules() {
+browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
+    activeTab = tabs[0]; // Safe to assume there will only be one result
+    
+    if (__debugMode) {
+      console.log(`activeTab.url:`);
+      console.log(activeTab.url);      
+    }
+
+    return activeTab;
+  }, console.error)
+  .then((activeTab) => {
+    tab = activeTab;
+    tabUrl = new URL(activeTab.url);
+    hostname = tabUrl.hostname;
+
+    if (cssWasInserted) {
+      removeCss(insertedCss);
+      //TODO I changed removeCss to use global insertedCss!
+    }
+
+    let newText = getText();
+
+    insertCss(newText);
+    setRules(hostname, newText);
+  });
+}
 
 function getTabUrl() {
   browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
@@ -394,40 +458,50 @@ function getTabUrl() {
       console.log(`hostname: ${hostname}`);
     }
 
-    if (localStorage.getItem(hostname)) {
-      hostnameFound = 1;
-    }
+    let getHostnamePromise = browser.storage.sync.get(hostname);
 
-    if (__debugMode) {
-      console.log(`---storageTest---`); 
-    }
-    if(!localStorage.getItem('www.google.com')) {
+    getHostnamePromise.then((res) => {
       if (__debugMode) {
-        console.log(`www.google.com not found in localStorage rules`); 
+        console.log(`getHostnamePromise.then =>`);
+        console.log(res);
       }
-      populateStorage();
-    } else {
-      if (__debugMode) {
-        console.log(`www.google.com WAS found in localStorage rules`); 
-        console.log(JSON.parse(localStorage.getItem(`www.google.com`)));
-      }
-    }
-    if(!localStorage.getItem(hostname)) {
-      if (__debugMode) {
-        console.log(`${hostname} not found in localStorage rules`); 
-      } 
-      // TODO?
-    } else {
-      if (__debugMode) {
-        console.log(`${hostname} WAS found in localStorage rules`); 
-        console.log(JSON.parse(localStorage.getItem(hostname)));
-        // setText(localStorage.getItem(hostname));
-      }
-      ruleObject = JSON.parse(localStorage.getItem(hostname));
-    }
 
-    listenForClicks();
+      if (res) {
+        //TODO: check this
+        hostnameFound = 1;
+      }
 
+      // if (__debugMode) {
+      //   console.log(`---storageTest---`); 
+      // }
+      // if(!browser.storage.sync.get('www.google.com')) {
+      //   if (__debugMode) {
+      //     console.log(`www.google.com not found in browser.storage.sync rules`); 
+      //   }
+      //   populateStorage();
+      // } else {
+      //   if (__debugMode) {
+      //     console.log(`www.google.com WAS found in browser.storage.sync rules`); 
+      //     console.log(JSON.parse(browser.storage.sync.get(`www.google.com`)));
+      //   }
+      // }
+
+      if(!res) {
+        if (__debugMode) {
+          console.log(`${hostname}f not found in browser.storage.sync rules`); 
+        } 
+        // TODO?
+      } else {
+        if (__debugMode) {
+          console.log(`${hostname} WAS found in browser.storage.sync rules`); 
+          console.log(JSON.parse(res));
+          // setText(browser.storage.sync.get(hostname));
+        }
+        ruleObject = JSON.parse(res);
+      }
+
+      listenForClicks();
+    })
   })
 
 }

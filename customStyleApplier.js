@@ -1,6 +1,6 @@
 // TODO: host rules online
 // TODO: about:home -like pages don't trigger for some reason. I blame manifest.json.
-// TODO: switch localStorage -> storage.sync
+// TODO: switch browser.storage.sync -> browser.storage.sync
 
 
 const __debugMode = 1;
@@ -14,70 +14,47 @@ if (hostname == "") {
 if (__debugMode) {
  	console.log(`window.location:`);
  	console.log(window.location);
-	console.log(`hostname: ${hostname}`);
+	console.log(`hostname:: ${hostname}`);
 }
+
+
+/// SYNC STORAGE PROOF OF CONCEPT //
+
+
+let storageTest = browser.storage.sync.set({
+	'color': 'black'
+})
+
+storageTest.then((err) => {
+	if (!err) {
+		let storageItem = browser.storage.sync.get('color');
+		storageItem.then((res) => {
+			console.log(res)
+			console.log(`Managed color is: ${res.color}`);
+		});
+		storageItem.error((err) => {
+			console.log(`storageItem error`);
+			console.log(err);
+		})
+	} else {
+		console.log(`storageTest error:`);
+		console.log(err);
+	}
+})
+
+///////////////////////////////////
+
 
 
 ///
 
 
-// setStyles();
 
-function populateStorage() {
-	let defaultKey = "www.google.com";
-	let defaultRules = {
-			"content": {
-				"body" : "background-color: black; color: white'",
-				".hp" : "background-color: blue; border: 1px solid yellow;",
-				"#searchform" : "background-color: red;"
-			},
-			"information": {
-				"author": "",
-				"creationDate": "",
-				"updateDate": "",
-				"votes": "0"
-			}
-		};
 
-	if (!localStorage.getItem(defaultKey)) {
-		let defaultRulesText = JSON.stringify(defaultRules);
-
-		localStorage.setItem(defaultKey, defaultRulesText);
-
-		console.log(localStorage.getItem(defaultKey));
-	}
-
-	// localStorage.setItem('bgcolor', document.getElementById('bgcolor').value);
-	// localStorage.setItem('font', document.getElementById('font').value);
-	// localStorage.setItem('image', document.getElementById('image').value);
+function getHostnameRules(hostname, callback) {
+	browser.storage.sync.get(hostname)
+	.then((result) => callback(result));
 }
-
-function getHostnameRules(hostname) {
-	return localStorage.getItem(hostname);
-}
-
-function setStyles() {
-	// var currentColor = localStorage.getItem('bgcolor');
-	// var currentFont = localStorage.getItem('font');
-	// var currentImage = localStorage.getItem('image');
-
-	// document.getElementById('bgcolor').value = currentColor;
-	// document.getElementById('font').value = currentFont;
-	// document.getElementById('image').value = currentImage;
-
-	// htmlElem.style.backgroundColor = '#' + currentColor;
-	// pElem.style.fontFamily = currentFont;
-	// imgElem.setAttribute('src', currentImage);
-
-
-}
-
-////
-
-
-
-
-
 
 
 let checkLoaded = () => {
@@ -201,29 +178,106 @@ function ruleContentToCssStringOne (ruleContent) {
   return tempCssString;
 };
 
+///////////////
+
+let checkAndApplyStyles = () => {
+  	let defaultKey = 'www.google.com';
+  	let defaultRules = {
+      "content": {
+        "body" : "background-color: black; color: white;",
+        ".hp" : "background-color: blue; border: 1px solid yellow;",
+        "#searchform" : "background-color: red;"
+      },
+      "information": {
+        "author": "",
+        "creationDate": "",
+        "updateDate": "",
+        "votes": "0"
+      }
+    };
+    let defaultRuleString = JSON.stringify(defaultRules);
+
+
+
+	browser.storage.sync.set({
+		defaultKey: defaultRuleString
+	}).then((setError) => {
+		if (setError) {
+			console.log(`debug Google sync.set failed:`);
+			console.log(setResult);	
+		} else {
+			console.log(`debug Google sync.set succeeded with rules:`);
+			console.log(defaultRuleString);
+		}
+
+		// if (__debugMode) {
+		// 	console.log(`---checkAndApplyStyles BEGIN---`);
+		// 	if (browser) {
+		// 		console.log(`browser:`);
+		// 		console.log(browser);			
+		// 	}
+		// 	console.log("browser.storage:");
+		// 	console.log(browser.storage);
+		// 	console.log(`browser.storage.sync.get(${hostname})`);
+		// 	browser.storage.sync.get(hostname)
+		// 	.then((result) => {
+		// 		console.log(`.get result (toString and object): `)
+		// 		console.log(result.toString());
+		// 		console.log(JSON.stringify(result));
+		// 		console.log(result);
+		// 		console.log(`------------`)
+		// 	})
+		// }
+
+		if (__debugMode) {
+			console.log(`${hostname} == www.google.com`);
+			console.log(hostname == 'www.google.com');
+		}
+
+		browser.storage.sync.get(hostname)
+		.then(hostRules => {
+			if(!hostRules) {
+				if (__debugMode) {
+					console.log(`${hostname} not found in browser.storage.sync rules`); 
+				} 
+				// TODO?
+			} else {
+				if (__debugMode) {
+					console.log(`${hostname} rules were found in browser.storage.sync rules`); 
+					console.log(`hostRules:`);
+					console.log(hostRules);
+					console.log(`JSON.parse(hostRules[hostname])`);
+					console.log(JSON.parse(hostRules[hostname]));
+					// setText(browser.storage.sync.get(hostname));
+				}
+				//TODO: JSON.parse causes problems with get results.
+				let tempRuleObject = JSON.parse(hostRules[hostname]);
+				let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
+				let cssApplyResult = applyCssString(cssString);
+			}
+		});
+	});
+
+	// if(!browser.storage.sync.get(hostname)) {
+	// 	if (__debugMode) {
+	// 		console.log(`${hostname} not found in browser.storage.sync rules`); 
+	// 		console.log(browser.storage.sync);
+	// 	} 
+	// 	// TODO?
+	// } else {
+	// 	if (__debugMode) {
+	// 		console.log(`${hostname} WAS found in browser.storage.sync rules`); 
+	// 		console.log(JSON.parse(browser.storage.sync.get(hostname)));
+	// 		// setText(browser.storage.sync.get(hostname));
+	// 	}
+	// 	let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
+	// 	let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
+	// 	let cssApplyResult = applyCssString(cssString);
+	// }
+
+}
+
 
 window.onload = checkAndApplyStyles;
 
-function checkAndApplyStyles () {
-	// if(!localStorage.getItem('www.google.com')) {
-	// 	populateStorage();
-	// }
-	
-	if(!localStorage.getItem(hostname)) {
-		if (__debugMode) {
-			console.log(`${hostname} not found in localStorage rules`); 
-		} 
-		// TODO?
-	} else {
-		if (__debugMode) {
-			console.log(`${hostname} WAS found in localStorage rules`); 
-			console.log(JSON.parse(localStorage.getItem(hostname)));
-			// setText(localStorage.getItem(hostname));
-		}
-		let tempRuleObject = JSON.parse(localStorage.getItem(hostname));
-		let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
-		let cssApplyResult = applyCssString(cssString);
-	}
-
-}
 

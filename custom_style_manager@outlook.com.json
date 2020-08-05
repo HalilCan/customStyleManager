@@ -1,0 +1,21 @@
+{
+  "name":  "custom_style_manager@outlook.com",
+  "description": "ignored",
+  "type": "storage",
+  "data": {
+    "www.google.com" : {
+      "content": {
+        "body" : "background-color: black; color: white;",
+        ".hp" : "background-color: blue; border: 1px solid yellow;",
+        "#searchform" : "background-color: red;"
+      },
+      "information": {
+        "author": "",
+        "creationDate": "",
+        "updateDate": "",
+        "votes": "0"
+      }
+    }
+  }
+}
+

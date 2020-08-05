@@ -1,9 +1,8 @@
 // TODO: refresh on active tab change
 
 // TODO: *** support complex selectors
-// TODO: *** weird refresh behavior
 
-const __debugMode = 1;
+const __debugMode = 0;
 
 /// PRODUCTION GLOBALS AND CONSTANTS ///
 
@@ -297,9 +296,16 @@ let insertCss = (cssString) => {
     console.log(`insertCss(`);
     console.log(cssString);
   }
-  browser.tabs.insertCSS({code: cssString}).then(() => {
-    insertedCss = cssString;
+  // browser.tabs.insertCSS({code: cssString}).then(() => {
+  //   insertedCss = cssString;
+  // });
+
+  browser.tabs.sendMessage(activeTab.id, {
+    command: "insertCss",
+    cssString: cssString
+    // ok NOW i get why variable name keys might need to be explicit
   });
+  insertedCs = cssString;
 }
 
 let removeCss = (cssString) => {

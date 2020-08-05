@@ -1,6 +1,10 @@
 // TODO: host rules online
 
-const __debugMode = 1;
+const __debugMode = 0;
+const styleSheetId = "userStyleSheet-CSM";
+
+let loadOnloadFired = 0;
+
 
 const hostname = window.location.hostname;
 if (hostname == "") {
@@ -49,11 +53,17 @@ function getHostnameRules(hostname, callback) {
 
 
 function applyCssString (cssString) {
+	let previousSheet = document.getElementById(styleSheetId);
+	if (previousSheet) {
+		previousSheet.disabled = true;
+		previousSheet.parentNode.removeChild(previousSheet);	
+	}
+
 	let newStyleSheet = document.createElement("style");
 	newStyleSheet.type = "text/css";
+	newStyleSheet.id = styleSheetId;
 	newStyleSheet.appendChild(document.createTextNode(cssString));
 	document.head.appendChild(newStyleSheet);
-
 
 	if (__debugMode) {
 		console.log(`---applyCssString---`);
@@ -98,6 +108,8 @@ function ruleContentToCssStringOne (ruleContent) {
 ///////////////
 
 let checkAndApplyStyles = () => {
+	loadOnloadFired = 1;
+
   	let defaultKey = 'www.google.com';
   	let defaultRules = {
       "content": {
@@ -207,9 +219,35 @@ browser.runtime.onMessage.addListener((message) => {
 	  	})
 	  	);
 	}
+	if (message.command === "insertCss") {
+		applyCssString(message.cssString);
+	}
 });
 
 ///////////////////////////////////////
 
 
-window.onload = checkAndApplyStyles;
+// window.onload = checkAndApplyStyles;
+
+window.addEventListener('load', function (){
+	if(__debugMode) {
+		console.log(`window.load event fired!`);
+	}
+	if (loadOnloadFired == 0) {
+    	checkAndApplyStyles();		
+	}
+});
+
+window.attachEvent('onload', function (){
+	if(__debugMode) {
+		console.log(`window.onload event fired!`);
+	}
+	if (loadOnloadFired == 0) {
+    	checkAndApplyStyles();		
+	}
+});
+
+if (loadOnloadFired == 0) {
+	//which will probably be true at this stage
+    checkAndApplyStyles();
+}

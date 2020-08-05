@@ -45,22 +45,11 @@ if (__debugMode) {
 
 ///////////////////////////////////
 
-
-
-///
-
-
-
-
 function getHostnameRules(hostname, callback) {
 	browser.storage.sync.get(hostname)
 	.then((result) => callback(result));
 }
 
-
-let checkLoaded = () => {
-	return document.readyState === "complete" || document.readyState === "interactive";
-};
 
 let applyCssString = (cssString) => {
 	let newStyleSheet = document.createElement("style");
@@ -77,76 +66,6 @@ let applyCssString = (cssString) => {
 	}
 };
 
-let parseCss = (styleContent) => {
-	let doc = document.implementation.createHTMLDocument(""),
-	styleElement = document.createElement("style");
-
-	styleElement.textContent = styleContent;
-	// the style will only be parsed once it is added to a document
-	doc.body.appendChild(styleElement);
-
-	let cssRules = styleElement.sheet.cssRules;
-
-	if (__debugMode) {
-		console.log("parsed CSS rules:");
-		console.log(cssRules);
-		console.log(cssRules[0]);
-		console.log(cssRules[0].cssText);
-	}
-
-	// doc.body.removeChild(styleElement);
-	return cssRulesToText(cssRules);
-};
-
-let cssRulesToText = (cssRules) => {
-	let string = "";
-	for (let i = 0; i < cssRules.length; i ++) {
-		string += cssRules[i].cssText;
-		string += `\n\n`;
-	}
-	if(__debugMode) {
-		console.log(`---cssRulesToText---`);
-		console.log(cssRules);
-		console.log(string);
-		console.log(`---------`);
-	}
-	return string;
-};
-
-let cssTextToRules = (styleContent) => {
-	let doc = document.implementation.createHTMLDocument(""),
-	styleElement = document.createElement("style");
-
-	styleElement.textContent = styleContent;
-	// the style will only be parsed once it is added to a document
-	doc.body.appendChild(styleElement);
-
-	let cssRules = styleElement.sheet.cssRules;
-
-	if (__debugMode) {
-		console.log(`---cssTextToRules---`);
-		console.log(styleContent);
-		console.log(cssRules);
-		console.log(`--------------`)
-	}
-
-	// doc.body.removeChild(styleElement);
-	return cssRules;
-
-};
-
-// if (hostname in ruleObjects) {
-// 	if (__debugMode) {
-// 		console.log(`${hostname} found in ruleObjects`);
-// 	}
-// 	// I  am considering making a more granular process on a 
-// 	// per-element basis, but that would take more time and browsers 
-// 	// manage additional CSS rules well anyway. (or even with 
-// 	// individual rule-pieces, but a similar argument applies)
-
-// 	let cssString = ruleObjectsToCssString(ruleObjects, hostname);
-// 	let cssApplyResult = applyCssString(cssString);
-// }
 
 function ruleContentToCssStringOne (ruleContent) {
   if (__debugMode) {
@@ -198,100 +117,6 @@ let checkAndApplyStyles = () => {
     };
     let defaultRuleString = JSON.stringify(defaultRules);
 
-   //  let checkDefaultPromise = browser.storage.sync.get(defaultKey);
-
-   //  checkDefaultPromise.then((res) => {
-   //  	if (!res[defaultKey]) {
-			// browser.storage.sync.set({
-			// 	defaultKey: defaultRuleString
-			// }).then((setError) => {
-			// 	if (setError) {
-			// 		console.log(`debug Google sync.set failed:`);
-			// 		console.log(setResult);	
-			// 	} else {
-			// 		console.log(`debug Google sync.set succeeded with rules:`);
-			// 		console.log(defaultRuleString);
-			// 	}
-
-			// 	// if (__debugMode) {
-			// 	// 	console.log(`---checkAndApplyStyles BEGIN---`);
-			// 	// 	if (browser) {
-			// 	// 		console.log(`browser:`);
-			// 	// 		console.log(browser);			
-			// 	// 	}
-			// 	// 	console.log("browser.storage:");
-			// 	// 	console.log(browser.storage);
-			// 	// 	console.log(`browser.storage.sync.get(${hostname})`);
-			// 	// 	browser.storage.sync.get(hostname)
-			// 	// 	.then((result) => {
-			// 	// 		console.log(`.get result (toString and object): `)
-			// 	// 		console.log(result.toString());
-			// 	// 		console.log(JSON.stringify(result));
-			// 	// 		console.log(result);
-			// 	// 		console.log(`------------`)
-			// 	// 	})
-			// 	// }
-
-			// 	if (__debugMode) {
-			// 		console.log(`${hostname} == www.google.com`);
-			// 		console.log(hostname == 'www.google.com');
-			// 	}
-
-			// 	browser.storage.sync.get(hostname)
-			// 	.then(hostRules => {
-			// 		if(!hostRules) {
-			// 			if (__debugMode) {
-			// 				console.log(`${hostname} not found in browser.storage.local rules`); 
-			// 			} 
-			// 			// TODO?
-			// 		} else {
-			// 			if (__debugMode) {
-			// 				console.log(`${hostname} rules were found in browser.storage.local rules`); 
-			// 				console.log(`hostRules:`);
-			// 				console.log(hostRules);
-			// 				console.log(`JSON.parse(hostRules[hostname])`);
-			// 				console.log(JSON.parse(hostRules[hostname]));
-			// 				// setText(browser.storage.sync.get(hostname));
-			// 			}
-			// 			//TODO: JSON.parse causes problems with get results.
-			// 			let tempRuleObject = JSON.parse(hostRules[hostname]);
-			// 			let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
-			// 			let cssApplyResult = applyCssString(cssString);
-			// 		}
-			// 	});
-			// });
-
-   //  	} else {
-			// if (__debugMode) {
-			// 		console.log(`${hostname} == www.google.com`);
-			// 		console.log(hostname == 'www.google.com');
-			// 	}
-
-			// 	browser.storage.sync.get(hostname)
-			// 	.then(hostRules => {
-			// 		if(!hostRules) {
-			// 			if (__debugMode) {
-			// 				console.log(`${hostname} not found in browser.storage.local rules`); 
-			// 			} 
-			// 			// TODO?
-			// 		} else {
-			// 			if (__debugMode) {
-			// 				console.log(`${hostname} rules were found in browser.storage.local rules`); 
-			// 				console.log(`hostRules:`);
-			// 				console.log(hostRules);
-			// 				console.log(`JSON.parse(hostRules[hostname])`);
-			// 				console.log(JSON.parse(hostRules[hostname]));
-			// 				// setText(browser.storage.sync.get(hostname));
-			// 			}
-			// 			//TODO: JSON.parse causes problems with get results.
-			// 			let tempRuleObject = JSON.parse(hostRules[hostname]);
-			// 			let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
-			// 			let cssApplyResult = applyCssString(cssString);
-			// 		}
-			// 	});
-   //  	}
-   //  })
-
 	if (__debugMode) {
 		console.log(`${hostname} == www.google.com`);
 		console.log(hostname == 'www.google.com');
@@ -320,45 +145,24 @@ let checkAndApplyStyles = () => {
 		}
 	});
 
-	// if(!browser.storage.sync.get(hostname)) {
-	// 	if (__debugMode) {
-	// 		console.log(`${hostname} not found in browser.storage.local rules`); 
-	// 		console.log(browser.storage.local);
-	// 	} 
-	// 	// TODO?
-	// } else {
-	// 	if (__debugMode) {
-	// 		console.log(`${hostname} WAS found in browser.storage.local rules`); 
-	// 		console.log(JSON.parse(browser.storage.sync.get(hostname)));
-	// 		// setText(browser.storage.sync.get(hostname));
-	// 	}
-	// 	let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
-	// 	let cssString = ruleContentToCssStringOne(tempRuleObject['content']);
-	// 	let cssApplyResult = applyCssString(cssString);
-	// }
-
 }
 
 /*
+Stackoverflow notes on why non-default variable-name keys suck:
+	It's 2016, and Chrome (and Firefox, and Edge - everyone using Chrome extension model) support ES6 Computed Property Names.
+	With that, the task becomes simpler:
 
-19
+	var storage = chrome.storage.local;
+	var v1 = 'k1';
 
-It's 2016, and Chrome (and Firefox, and Edge - everyone using Chrome extension model) support ES6 Computed Property Names.
-
-With that, the task becomes simpler:
-
-var storage = chrome.storage.local;
-var v1 = 'k1';
-
-storage.set({
-  [v1]: 's1' // Will evaluate v1 as property name
-});
-
-storage.get(v1, function(result) {
-    console.log(v1, result);
-});
-
-
+	storage.set({
+	  [v1]: 's1' // Will evaluate v1 as property name
+	});
+	
+	storage.get(v1, function(result) {
+	    console.log(v1, result);
+	});
+THANKS ES6 I HATE THIS
 */
 
 ///////// RULE SYNC //////////////////
@@ -399,7 +203,7 @@ function saveRulesAsync(newHostname, ruleString, callback) {
 
 
 
-//// MESSAGE LISTENERS ////////////////
+//// MESSAGE LISTENER ////////////////
 
 browser.runtime.onMessage.addListener((message) => {
 	if (message.command === "saveRules") {
@@ -413,5 +217,3 @@ browser.runtime.onMessage.addListener((message) => {
 
 
 window.onload = checkAndApplyStyles;
-
-

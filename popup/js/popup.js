@@ -31,74 +31,6 @@ if (__debugMode) {
 ////////////////////////////////////////
 
 
-
-/// STORAGE INTEGRATION ///
-
-// function populateStorage() {
-//   if (__debugMode) {
-//     console.log(`populateStorage() BEGIN`);
-//   }
-
-//   let defaultKey = "www.google.com";
-//   let defaultRules = {
-//       "content": {
-//         "body" : "background-color: black; color: white;",
-//         ".hp" : "background-color: blue; border: 1px solid yellow;",
-//         "#searchform" : "background-color: red;"
-//       },
-//       "information": {
-//         "author": "",
-//         "creationDate": "",
-//         "updateDate": "",
-//         "votes": "0"
-//       }
-//     };
-
-// if (!browser.storage.sync.get(defaultKey)) {
-//     let defaultRulesText = JSON.stringify(defaultRules);
-
-//     browser.storage.sync.set({
-//       defaultKey: defaultRulesText
-//     });
-
-//     console.log(browser.storage.sync.get(defaultKey));
-//   }
-
-//   if (__debugMode) {
-//     console.log(`populateStorage() END`); 
-//   }
-
-//   // browser.storage.sync.set('bgcolor', document.getElementById('bgcolor').value);
-//   // browser.storage.sync.set('font', document.getElementById('font').value);
-//   // browser.storage.sync.set('image', document.getElementById('image').value);
-// }
-
-
-function saveRulesAsync(hostname, ruleString, callback) {
-  if (__debugMode) {
-    console.log(`saveRulesAsync() BEGIN WITH ARGS:`);
-    console.log(hostname);
-    console.log(ruleString);
-    console.log(callback);
-    console.log(`-----------`)
-  }
-
-
-  let setRulePromise = browser.storage.sync.set({
-    hostname: ruleString
-  });
-
-  setRulePromise.then((err) => {
-    if (err) {
-      console.log(`error in setRulePromise > err`);
-      console.log(err);
-    } else {
-      console.log(`saveRulesAsync > setRulePromise success.`);
-      callback();
-    }
-  })
-}
-
 function setRules(activeTab, hostname, cssText, callback) {
   hostname = hostname.toString();
 
@@ -142,9 +74,6 @@ function setRules(activeTab, hostname, cssText, callback) {
         hostname: hostname,
         ruleString: ruleString
       });
-
-      // saveRulesAsync(hostname, ruleString, callback);
-      //TODO: handle async
     } else {
 
       if (__debugMode) {
@@ -167,31 +96,10 @@ function setRules(activeTab, hostname, cssText, callback) {
         hostname: hostname,
         ruleString: ruleString
       });
-
-      // saveRulesAsync(hostname, ruleString, callback);
-      //TODO: handle async
     }
   });
 }
 
-// function getRules(hostname) {
-//   if (__debugMode) {
-//     console.log(`getRules(${hostname}) BEGIN`); 
-//   }
-  
-//   if(!browser.storage.sync.get(hostname)) {
-//     return "";
-//   }
-
-//   let tempRuleObject = JSON.parse(browser.storage.sync.get(hostname));
-//   if (__debugMode) {
-//     console.log(`tempRuleObject in getRules:`);
-//     console.log(tempRuleObject);
-//   }
-
-//   ruleObject = tempRuleObject;
-//   return tempRuleObject;
-// }
 
 ///////////////////////////
 
@@ -388,11 +296,6 @@ let insertCss = (cssString) => {
   }
   browser.tabs.insertCSS({code: cssString}).then(() => {
     insertedCss = cssString;
-    // let url = beastNameToURL(e.target.textContent);
-    // browser.tabs.sendMessage(tabs[0].id, {
-    //   command: "beastify",
-    //   beastURL: url
-    // });
   });
 }
 
@@ -517,36 +420,18 @@ function getTabUrl() {
       }
 
       if (res && res[hostname]) {
-        //TODO: check this
         hostnameFound = 1;
       }
-
-      // if (__debugMode) {
-      //   console.log(`---storageTest---`); 
-      // }
-      // if(!browser.storage.sync.get('www.google.com')) {
-      //   if (__debugMode) {
-      //     console.log(`www.google.com not found in browser.storage.local rules`); 
-      //   }
-      //   populateStorage();
-      // } else {
-      //   if (__debugMode) {
-      //     console.log(`www.google.com WAS found in browser.storage.local rules`); 
-      //     console.log(JSON.parse(browser.storage.sync.get(`www.google.com`)));
-      //   }
-      // }
 
       if(!res[hostname]) {
         if (__debugMode) {
           console.log(`${hostname} not found in browser.storage.local rules`); 
         } 
-        // TODO?
       } else {
         if (__debugMode) {
           console.log(`${hostname} WAS found in browser.storage.local rules`); 
           console.log(hostname);
           console.log(JSON.parse(res[hostname]));
-          // setText(browser.storage.sync.get(hostname));
         }
         ruleObject = JSON.parse(res[hostname]);
       }

@@ -1,5 +1,7 @@
 // TODO: refresh on active tab change
+
 // TODO: *** support complex selectors
+// TODO: *** weird refresh behavior
 
 const __debugMode = 1;
 

@@ -1,6 +1,5 @@
 // TODO: refresh on active tab change
-
-// TODO: *** support complex selectors
+// TODO: support conditional selectors (look into using the browser itself to parse CSS)
 
 const __debugMode = 0;
 
@@ -186,12 +185,18 @@ function ruleContentToCssString (ruleContent) {
 
 /// CSS PARSING (INTO VALID OBJECTS) ///
 
-function isValidSelectorChar(code) {
+function isAlphaNumeric(code) {
   return  ((code > 47 && code < 58) || // numeric (0-9)
           (code > 64 && code < 91) || // upper alpha (A-Z)
-          (code > 96 && code < 123) || // lower alpha (a-z)
+          (code > 96 && code < 123)); // lower alpha (a-z)
+}
+
+function isValidSelectorChar(code) {
+  return  (isAlphaNumeric(code) || // lower alpha (a-z)
           (code == 46) || (code == 35) || // . 46, # 35 
-          (code == 95) || (code == 45)); // _ and -
+          (code == 95) || (code == 45) || //_ and -
+          (code == 44) || (code == 32) // ","" and " "
+          ); 
 }
 
 function isOpeningBrace(charcode) {

@@ -20,27 +20,28 @@ if (__debugMode) {
 
 /// SYNC STORAGE PROOF OF CONCEPT //
 
+if (__debugMode) {
+	let storageTest = browser.storage.local.set({
+		'color': 'black'
+	})
 
-let storageTest = browser.storage.local.set({
-	'color': 'black'
-})
-
-storageTest.then((err) => {
-	if (!err) {
-		let storageItem = browser.storage.local.get('color');
-		storageItem.then((res) => {
-			console.log(res)
-			console.log(`Managed color is: ${res.color}`);
-		});
-		storageItem.error((err) => {
-			console.log(`storageItem error`);
+	storageTest.then((err) => {
+		if (!err) {
+			let storageItem = browser.storage.local.get('color');
+			storageItem.then((res) => {
+				console.log(res)
+				console.log(`Managed color is: ${res.color}`);
+			});
+			storageItem.error((err) => {
+				console.log(`storageItem error`);
+				console.log(err);
+			})
+		} else {
+			console.log(`storageTest error:`);
 			console.log(err);
-		})
-	} else {
-		console.log(`storageTest error:`);
-		console.log(err);
-	}
-})
+		}
+	})	
+}
 
 ///////////////////////////////////
 
@@ -382,10 +383,12 @@ function saveRulesAsync(newHostname, ruleString, callback) {
 
   setRulePromise.then((err) => {
     if (err) {
-      console.log(`error in setRulePromise > err`);
-      console.log(err);
+		console.log(`error in setRulePromise > err`);
+		console.log(err);
     } else {
-      console.log(`saveRulesAsync > setRulePromise success.`);
+    	if (__debugMode) {
+      		console.log(`saveRulesAsync > setRulePromise success.`);
+    	}
       callback();
     }
   })

@@ -1,6 +1,6 @@
 # Summary
 
-Custom Style Manager allows domain-level CSS styling for any website you visit. Your changes will sync across all of your logged-in Firefox browsers. 
+This is a sync-enabled Firefox extension. Custom Style Manager allows domain-level CSS styling for any website you visit. Your changes will sync across all of your logged-in Firefox browsers. 
 
 # Description
 Currently, Custom Style Manager allows you to make styling changes to the active domain through the editor available in the Firefox Toolbar. Your changes will be synced across all compatible logged in Firefox browsers.
